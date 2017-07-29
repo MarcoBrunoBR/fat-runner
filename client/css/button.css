@@ -1,0 +1,74 @@
+.wrap-player1,
+.wrap-player2 {
+  position: absolute;
+  height: 50%;
+  width: 100%;
+}
+.wrap-player1 {
+  transform: rotate(180deg);
+}
+.wrap-player1 button {
+  color: black;
+  background-color: rgba(255, 255, 255, .3);
+}
+.wrap-player1 .sombra {
+  background-color: rgba(255, 255, 255, .5);
+}
+.wrap-player2 {
+  bottom: 0;
+}
+button, .sombra{
+  cursor: pointer;
+}
+button {
+  font-family: inherit;
+  font-size: inherit;
+  display: block;
+  width: 40vw;
+  height: 40vw;
+  border-radius: 50% 0%;
+  background-color: rgba(0, 0, 0, .3);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-transform: uppercase;
+  transition: transform 50ms ease-out;
+  color: #FFF;
+  font-weight: bold;
+  z-index: 1;
+}
+
+button:active {
+  transform: translate(-50%, -46.4%);
+  transition: transform 50ms ease-in;
+}
+.sombra {
+  width: 40vw;
+  height: 40vw;
+  border-radius: 50% 0%;
+  background-color: rgba(0, 0 ,0,.5);
+  position: absolute;
+  left: 50%;
+  top: 54.4%;
+  transform: translate(-50%, -50%);
+}
+
+.pontos {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .4);
+}
+.pontos div {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: inherit;
+  background-color: rgba(255, 255, 255, .7);
+  transform-origin: left top;
+  transform: scaleX(.5);
+}
