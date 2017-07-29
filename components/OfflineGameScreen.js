@@ -1,5 +1,4 @@
-((global, doc) => {
-
+((global, $doc) => {
   global.OfflineGameScreen = function() {
     return {
       render: () => render()
@@ -32,8 +31,9 @@
     $component.on('click', handlePontos)
 
     $component.on('click', '.player1', handlePlayer1)
-
     $component.on('click', '.player2', handlePlayer2)
+
+
 
     return $component
   }
