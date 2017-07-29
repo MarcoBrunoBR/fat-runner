@@ -28,7 +28,7 @@
         serverConnectionPromise
             .then(connection => connection.findPlayer())
             .then(match => {
-                Screen.render(Game, {match})
+                Screen.render(GameScreen, {match})
             })
             .catch(error => {
                 alert(error)
@@ -39,4 +39,4 @@
         Screen.render(OfflineGameScreen)
     }
 
-})(window, Objectz.compose, Component, DOMComponent, Server, OfflineGameScreen)
+})(window, Objectz.compose, Component, DOMComponent, Server, Screen, OfflineGameScreen)

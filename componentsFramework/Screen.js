@@ -2,8 +2,8 @@
     const screen = document.querySelector("#screen")
 
     global.Screen = compose(Component, {
-        render: function(Component){
-            const component = new Component()
+        render: function(Component, props){
+            const component = new Component(props)
             screen.appendChild(component.render())
         }
     })

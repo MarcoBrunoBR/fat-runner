@@ -1,6 +1,6 @@
 ((global) => {
 
-    global.Game = function(match){
+    global.GameScreen = function({match}){
         //quando o ser vivo clicar aqui me avisa
         match.click()
 
