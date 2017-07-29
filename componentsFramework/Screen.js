@@ -4,7 +4,8 @@
     global.Screen = compose(Component, {
         render: function(Component, props){
             const component = new Component(props)
-            screen.appendChild(component.render())
+            screen.innerHTML = ''
+            screen.appendChild(component.render().getElement())
         }
     })
 

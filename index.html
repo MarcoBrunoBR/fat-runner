@@ -1,29 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
 
-  <title>Fat Runner</title>
-
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/button.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/button.css">
 </head>
 <body>
-  <div class="wrap-player1">
-    <button class="player player1">!</button>
-    <div class="sombra"></div>
-  </div>
+    <main id="screen">
 
-  <div class="pontos">
-    <div></div>
-  </div>
+    </main>
 
-  <div class="wrap-player2">
-    <button class="player player2">!</button>
-    <div class="sombra"></div>
-  </div>
+    <script>
+        window.onload = function(){
+            Screen
+                .render(InitialScreen)
+        }
+    </script>
 
-  <script src="js/button.js"></script>
+    <script src="vendor/eventemitter2.js"></script>
+    <script src="vendor/socket.io.js"></script>
+    <script src="modules/multiplayer/Match.js"></script>
+    <script src="modules/multiplayer/ServerConnection.js"></script>
+    <script src="modules/multiplayer/Server.js"></script>
+
+    <script src="modules/utils/Objectz.js"></script>
+
+    <script src="componentsFramework/DOM/DOMComponent.js"></script>
+    <script src="componentsFramework/Component.js"></script>
+    <script src="componentsFramework/Screen.js"></script>
+
+    <script src="components/OfflineGameScreen.js"></script>
+    <script src="components/InitialScreen.js"></script>
+    <script src="components/GameScreen.js"></script>
 </body>
 </html>

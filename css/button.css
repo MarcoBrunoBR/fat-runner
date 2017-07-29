@@ -7,7 +7,7 @@
 .wrap-player1 {
   transform: rotate(180deg);
 }
-.wrap-player1 button {
+.wrap-player1 .player {
   color: black;
   background-color: rgba(255, 255, 255, .3);
 }
@@ -17,10 +17,10 @@
 .wrap-player2 {
   bottom: 0;
 }
-button, .sombra{
+.player, .sombra{
   cursor: pointer;
 }
-button {
+.player {
   font-family: inherit;
   font-size: inherit;
   display: block;
@@ -39,7 +39,7 @@ button {
   z-index: 1;
 }
 
-button:active {
+.player:active {
   transform: translate(-50%, -46.4%);
   transition: transform 50ms ease-in;
 }

@@ -5,7 +5,7 @@
             render: () => render(props)
         }
     }
-    
+
     const render = (props) => {
         const $component = new DOMComponent()
         $component.html(`
@@ -18,7 +18,7 @@
         `)
         $component.on("click", "#startOnline", handleOnlinePlayerStart)
         $component.on("click", "#startOffline", handleOfflinePlayerStart)
-        return $component.getElement()
+        return $component
     }
 
     const server = new Server("https://fatrunner-server.herokuapp.com")
