@@ -11,7 +11,7 @@
     }
   })()
 
-  global.OnlineGameScreen = function(remoteMatch) {
+  global.OnlineGameScreen = function({remoteMatch} = {}) {
     const state = Object.seal({
       color: getColor()
       ,winner: undefined

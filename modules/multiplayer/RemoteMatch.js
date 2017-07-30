@@ -1,11 +1,9 @@
 ((global) => {
 
-    global.RemoteMatch = function(me, oponent){
+    global.RemoteMatch = function(oponent){
 
         const state = Object.seal({
-            color: getColor()
-            ,winner: undefined
-            ,pointCounter: 10
+            pointCounter: 10
         })
 
         const eventEmitter = new EventEmitter2({wildcard: true})
@@ -16,17 +14,18 @@
 
         oponent.on("click", () => {
             state.pointCounter --
-            eventEmitter.emit("updatePoints")
+            eventEmitter.emit("updatePoints", state.pointCounter)
         })
 
-        me.on("click", () => {
+        const handleClick = () => {
+            oponent.emit("click")
             state.pointCounter++
-            eventEmitter.emit("updatePoints")
-        })
+            eventEmitter.emit("updatePoints", state.pointCounter)
+        }
 
         return {
-            click: () => me.emit("click")
-            ,sayIAmReadyToStart: () => me.emit("sayIAmReadyToStart")
+            click: () => handleClick()
+            ,sayIAmReadyToStart: () => oponent.emit("sayIAmReadyToStart")
             ,onPointUpdate: (callback) => eventEmitter.on("updatePoints", () => callback(state.pointCounter))
         }
     }

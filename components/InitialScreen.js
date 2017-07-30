@@ -32,7 +32,8 @@
                 })
             })
             .catch(error => {
-                alert(error)
+                console.error(error)
+                server.disconnect()
             })
     }
 

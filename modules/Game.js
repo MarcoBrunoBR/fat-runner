@@ -1,13 +1,13 @@
 ((global) => {
 
     const stateMap = {
-        [GameState.INIT] : () => Screen.render(InitialScreen)
-        ,[GameState.ONLINE_START] : () => Screen.render(OnlineGameScreen)
-        ,[GameState.OFFLINE_START] : () => Screen.render(OfflineGameScreen)
+        [GameState.INIT] : (props) => Screen.render(InitialScreen, props)
+        ,[GameState.ONLINE_START] : (props) => Screen.render(OnlineGameScreen, props)
+        ,[GameState.OFFLINE_START] : (props) => Screen.render(OfflineGameScreen, props)
     }
 
     global.Game = {
-        state: (gameState) => stateMap[gameState]()
+        state: (gameState, props) => stateMap[gameState](props)
     }
 
 })(window, Screen, GameState, InitialScreen, OfflineGameScreen, OnlineGameScreen)
