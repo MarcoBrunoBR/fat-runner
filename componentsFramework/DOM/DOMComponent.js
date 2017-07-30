@@ -10,6 +10,7 @@
             }
             ,find: (elementSelector) => $domElement.querySelector(elementSelector)
             ,findAll: (elementSelector) => [...$domElement.querySelectorAll(elementSelector)]
+            ,addClass: (className) =>  $domElement.classList.add(className)
             ,on: (eventName, ...otherArgs) => {
                 let elementSelector
                 let callback
