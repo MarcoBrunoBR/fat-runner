@@ -11,13 +11,14 @@
             socket.on("playerFound", (matchID) => {
                 const emitToMatch = (msgName) => socket.emit(matchID + "/" + msgName)
                 const receiveFromMatch = (msgName, callback) => socket.on(matchID + "/" + msgName)
-                resolve(new Match({emit: emitToMatch}, {on: receiveFromMatch}))
+                resolve(new RemoteMatch({emit: emitToMatch}, {on: receiveFromMatch}))
             })
             socket.on("playerNotFound", () => {
                 reject("Can't find a player for you right now :( Try again later =)")
             })
             socket.emit("findPlayer")
+            setTimeout(() => reject("Can't find a player for you right now :( Try again later =)"))
         })
     }
 
-})(window, Match, Promise)
+})(window, RemoteMatch, Promise)

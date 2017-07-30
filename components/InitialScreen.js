@@ -24,11 +24,12 @@
     const server = new Server("https://fatrunner-server.herokuapp.com")
 
     const handleOnlinePlayerStart = (event) => {
-        const serverConnectionPromise = server.connect()
-        serverConnectionPromise
+        server.connect()
             .then(connection => connection.findPlayer())
-            .then(match => {
-                Game.state(GameState.ONLINE_START)
+            .then(remoteMatch => {
+                Game.state(GameState.ONLINE_START, {
+                    remoteMatch
+                })
             })
             .catch(error => {
                 alert(error)
