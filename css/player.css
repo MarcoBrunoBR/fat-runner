@@ -58,6 +58,15 @@
   animation: pump 50ms linear infinite;
 }
 
+@keyframes pump {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
+
 .player-shadow {
   width: 40vw;
   height: 40vw;
@@ -69,21 +78,22 @@
   pointer-events: none;
 }
 
-@keyframes pump {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-}
-
 .wrapperPlayers--player1Won .player--2 .player-btn,
 .wrapperPlayers--player1Won .player--2 .player-shadow,
 .wrapperPlayers--player2Won .player--1 .player-btn,
 .wrapperPlayers--player2Won .player--1 .player-shadow {
   transform-origin: 0 0;
   animation: runnedOutOfPower 1s ease forwards;
+}
+
+@keyframes runnedOutOfPower {
+  0% {
+    transform: rotate(0deg) scale(1) translate(-50%, -50%);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(0) translate(-100%, -100%);
+  }
 }
 
 .player--1:before,
@@ -106,17 +116,6 @@
   transform-origin: 0 0 ;
   animation: runnedOutOfPowerGrave 2s ease;
 }
-
-@keyframes runnedOutOfPower {
-  0% {
-    transform: rotate(0deg) scale(1) translate(-50%, -50%);
-  }
-
-  100% {
-    transform: rotate(360deg) scale(0) translate(-100%, -100%);
-  }
-}
-
 
 @keyframes runnedOutOfPowerGrave {
   0%, 100% {
