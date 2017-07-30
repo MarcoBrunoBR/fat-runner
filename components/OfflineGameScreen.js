@@ -70,7 +70,7 @@
 
     const handleTouch = function(event) {
       if(!state.winner){
-        const $origin = event.path[0]
+        const $origin = event.target
         
         state.color = getColor()
 
@@ -84,6 +84,14 @@
         }
       }
     }
+
+    document.addEventListener('touchmove', function (event) {
+      if (event.scale !== 1) { event.preventDefault() }
+    }, false)
+    
+    document.addEventListener('touchend', function (event) {
+      event.preventDefault()
+    }, false);
 
     const handlePlayer1 = (event) => {
       state.pointCounter--

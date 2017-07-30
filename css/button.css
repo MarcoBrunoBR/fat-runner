@@ -49,7 +49,9 @@
 
 .player span {
   display: block;
-  pointer-events: none
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .player:active span {
