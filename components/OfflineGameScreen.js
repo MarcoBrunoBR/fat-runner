@@ -43,11 +43,12 @@
 
   const maxPoints = 20
   let player1AndPlayer2 = 10
-  
+
   const handleTouch = function(event) {
-    state.color = colors[Math.round(Math.random()*7)]
     const $origin = event.path[0]
-    console.log($origin)
+
+    state.color = colors[Math.round(Math.random()*7)]
+    
     if ($origin.classList.contains('player1')) handlePlayer1()
     if ($origin.classList.contains('player2')) handlePlayer2()
   }
