@@ -8,6 +8,7 @@
             html: (template) => {
                 $domElement.innerHTML = template
             }
+            ,find: (elementSelector) => $domElement.querySelector(elementSelector)
             ,on: (eventName, ...otherArgs) => {
                 let elementSelector
                 let callback

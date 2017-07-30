@@ -28,12 +28,15 @@
       </div>
     `)
 
-    $component.on('click', handlePontos)
-
     $component.on('click', '.player1', handlePlayer1)
     $component.on('click', '.player2', handlePlayer2)
 
-
+    const $pontos = $component.find('.pontos')
+    requestAnimationFrame(function raf(){
+      $body.style.backgroundColor = colors[Math.round(Math.random()*7)]
+      $pontos.querySelector("div").style.transform = `scaleX(${((player1AndPlayer2*100)/maxPoints)/100})`
+      requestAnimationFrame(raf)
+    })
 
     return $component
   }
@@ -47,14 +50,6 @@
 
   const handlePlayer2 = (event) => {
     player1AndPlayer2--
-  }
-
-  const handlePontos = function(event){
-    const $pontos = this.querySelector('.pontos')
-    requestAnimationFrame(function(){
-      $body.style.backgroundColor = colors[Math.round(Math.random()*7)]
-      $pontos.querySelector("div").style.transform = `scaleX(${((player1AndPlayer2*100)/maxPoints)/100})`
-    })
   }
 
 })(window, document)
