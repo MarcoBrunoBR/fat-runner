@@ -4,11 +4,15 @@
   border: none;
 }
 
-ul, ol, li {
-  list-style: none;
+html, body {
+  height: 100%;
 }
 
 body {
   font-family: Arial;
   font-size: 50px;
+}
+
+ul, ol, li {
+  list-style: none;
 }

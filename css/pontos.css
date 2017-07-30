@@ -20,6 +20,25 @@
   transition: transform 80ms linear;
 }
 
+.pontos-barra--left,
+.pontos-barra--right {
+  transform: translateX(0);
+  width: 50%;
+  font-size: 20px;
+  height: 100%;
+  text-align: center;
+  line-height: 40px;
+  text-transform: uppercase;
+  font-weight: bold;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.pontos-barra--right {
+  position: absolute;
+  right: 0;
+}
+
 .pontos-texto {
   position: absolute;
   z-index: 1;

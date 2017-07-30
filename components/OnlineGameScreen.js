@@ -4,7 +4,7 @@
   const getColor = (() => {
     const colors = ['#1abc9c', '#2ecc71', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c']
     let previousColor
-    return () => { 
+    return () => {
       const possibleColors = colors.filter(color => color != previousColor)
       previousColor = possibleColors[Math.round(Math.random()* (possibleColors.length - 1))]
       return previousColor
@@ -17,28 +17,28 @@
       ,winner: undefined
       ,pointCounter: 10
     })
-    
+
     const render = () => {
       const $component = new DOMComponent()
 
       $component.html(`
-        <div class="wrap-player1">
-          <button class="player player1">
+        <div class="player player--1">
+          <button class="player-btn player-btn--1">
             <span>!</span>
           </button>
-          <div class="sombra"></div>
+          <div class="player-shadow"></div>
         </div>
 
         <div class="pontos">
-          <div></div>
-          <span>You Win!</span>
+          <div class="pontos-barra"></div>
+          <span class="pontos-texto">You Win!</span>
         </div>
 
-        <div class="wrap-player2">
-          <button class="player player2">
+        <div class="player player--2">
+          <button class="player-btn player-btn--2">
             <span>!</span>
           </button>
-          <div class="sombra"></div>
+          <div class="player-shadow"></div>
         </div>
       `)
 
@@ -70,7 +70,7 @@
     const handleTouch = function(event) {
       if(!state.winner){
         const $origin = event.path[0]
-        
+
         state.color = getColor()
         remoteMatch.click()
 

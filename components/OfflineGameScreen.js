@@ -3,9 +3,9 @@
   const MAX_POINTS = 20
 
   const getColor = (() => {
-    const colors = ['#1abc9c', '#2ecc71', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c']
+    const colors = ['#1abc9c', '#2ecc71', '#34495e', '#f1c40f', '#e67e22', '#e74c3c']
     let previousColor
-    return () => { 
+    return () => {
       const possibleColors = colors.filter(color => color != previousColor)
       previousColor = possibleColors[Math.round(Math.random()* (possibleColors.length - 1))]
       return previousColor
@@ -18,7 +18,7 @@
       ,winner: undefined
       ,pointCounter: 10
     })
-    
+
     const render = () => {
       const $component = new DOMComponent()
 
@@ -75,7 +75,7 @@
     const handleTouch = function(event) {
       if(!state.winner){
         const $origin = event.target
-        
+
         state.color = getColor()
 
         if ($origin.classList.contains('player-btn--1')) handlePlayer1()
@@ -100,7 +100,7 @@
     document.addEventListener('touchmove', function (event) {
       if (event.scale !== 1) { event.preventDefault() }
     }, false)
-    
+
     document.addEventListener('touchend', function (event) {
       event.preventDefault()
     }, false);

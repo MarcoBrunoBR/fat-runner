@@ -1,0 +1,22 @@
+.navigation {
+  position: absolute;
+  bottom: 0;
+  height: 50%;
+  width: 100%;
+}
+
+.navigation-item {
+  box-sizing: border-box;
+  padding-top: 20px;
+  padding-bottom: 15px;
+  height: 100%;
+  width: 50%;
+  float: left;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.navigation-item img {
+  width: 45%;
+}
