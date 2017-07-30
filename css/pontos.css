@@ -29,10 +29,13 @@
   line-height: 40px;
   text-align: center;
   text-transform: uppercase;
+  transform: scale(0);
+  transition: transform .3s ease 1.8s;
   color: transparent;
 }
 
 .wrapperPlayers--player1Won .pontos .pontos-texto,
 .wrapperPlayers--player2Won .pontos .pontos-texto {
-  text-shadow: 0 0 2px rgba(0,0,0, .25), 0 0 3px rgba(255,255,255, .25)
+  text-shadow: 0 0 2px rgba(0,0,0, .25), 0 0 3px rgba(255,255,255, .25);
+  transform: scale(1);
 }
