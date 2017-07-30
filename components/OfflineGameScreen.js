@@ -12,10 +12,13 @@
   const render = () => {
     const $component = new DOMComponent()
     state.color = colors[Math.round(Math.random()*7)]
+    state.isHappening = true
 
     $component.html(`
       <div class="wrap-player1">
-        <button class="player player1">!</button>
+        <button class="player player1">
+          <span>!</span>
+        </button>
         <div class="sombra"></div>
       </div>
 
@@ -24,16 +27,19 @@
       </div>
 
       <div class="wrap-player2">
-        <button class="player player2">!</button>
+        <button class="player player2">
+          <span>!</span>
+        </button>
         <div class="sombra"></div>
       </div>
     `)
 
     const $pontos = $component.find('.pontos')
     requestAnimationFrame(function raf(){
+
       $body.style.backgroundColor = state.color
-      $pontos.querySelector("div").style.transform = `scaleX(${((player1AndPlayer2*100)/maxPoints)/100})`
-      requestAnimationFrame(raf)
+      $pontos.querySelector("div").style.transform = `translateX(-${((pointCounter*100)/maxPoints)}%)`
+      if (state.isHappening) requestAnimationFrame(raf)
     })
 
     $component.on('touchend', handleTouch)
@@ -42,23 +48,37 @@
   }
 
   const maxPoints = 20
-  let player1AndPlayer2 = 10
+  let pointCounter = 10
+
+  const startWinnerAnimation = function(pointCounter, $component) {
+    if (pointCounter == 0) $component.classList.add('wrapperPlayers--player1Won')
+    if (pointCounter == maxPoints) $component.classList.add('wrapperPlayers--player2Won')
+  }
 
   const handleTouch = function(event) {
-    const $origin = event.path[0]
+    if(state.isHappening){  
+      const $origin = event.path[0]
 
-    state.color = colors[Math.round(Math.random()*7)]
-    
-    if ($origin.classList.contains('player1')) handlePlayer1()
-    if ($origin.classList.contains('player2')) handlePlayer2()
+      state.color = colors[Math.round(Math.random()*7)]
+
+      if ($origin.classList.contains('player1')) handlePlayer1()
+      if ($origin.classList.contains('player2')) handlePlayer2()
+
+      if (pointCounter == maxPoints || pointCounter == 0) {
+        state.isHappening = false
+        startWinnerAnimation(pointCounter, this)
+      }
+    }
   }
 
   const handlePlayer1 = (event) => {
-    player1AndPlayer2++
+    pointCounter--
   }
 
   const handlePlayer2 = (event) => {
-    player1AndPlayer2--
+    pointCounter++
   }
+
+
 
 })(window, document)
