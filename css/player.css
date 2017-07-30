@@ -1,9 +1,9 @@
-.player--1,
-.player--2 {
+.player {
   position: absolute;
   height: 50%;
   width: 100%;
   pointer-events: none;
+  transition: transform 1s ease, opacity 1s ease 200ms;
 }
 
 .player--1 {
@@ -31,7 +31,7 @@
   top: 50%;
   transform: translate(-50%, -50%);
   text-transform: uppercase;
-  transition: transform 50ms ease-out;
+  transition: transform 50ms ease-out, opacity 1s ease-out;
   font-weight: bold;
   z-index: 1;
   pointer-events: all;
@@ -151,4 +151,10 @@
 .player--2:before {
   background-color: rgba(255, 255, 255, .3);
   border: 15px solid rgba(255, 255, 255, .5);
+}
+
+.wrapperPlayers--player1Won.wrapperPlayers--openedOptions .player--1,
+.wrapperPlayers--player2Won.wrapperPlayers--openedOptions .player--2 {
+  transform: scaleX(2);
+  opacity: 0;
 }

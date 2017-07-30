@@ -30,6 +30,20 @@
           <div class="player-shadow"></div>
         </div>
 
+        <div class="gameEndOptions">
+          <div class="gameEndOptions-wrapper gameEndOptions-wrapper--1">
+            <button class="gameEndOptions-option">
+              Menu
+            </button>
+            <button class="gameEndOptions-shadow"></button>
+          </div>
+          <div class="gameEndOptions-wrapper gameEndOptions-wrapper--2">
+            <button class="gameEndOptions-option">
+              Play Again
+            </button>
+          </div>
+        </div>
+
         <div class="pontos">
           <div class="pontos-barra"></div>
           <span class="pontos-texto">You Win!</span>
@@ -45,6 +59,7 @@
 
       const $msgVitoria = $component.find('.pontos span')
       const $barraPontos = $component.find('.pontos div')
+      const $options = $component.find('.gameEndOptions')
 
       requestAnimationFrame(function raf(){
         $page.style.backgroundColor = state.color
@@ -60,6 +75,9 @@
           if (state.winner == 2) {
             $component.addClass('wrapperPlayers--player2Won')
           }
+          $component.on('transitionend', ".pontos-texto", () => {
+            $component.addClass('wrapperPlayers--openedOptions')
+          })
         }
       })
 

@@ -1,0 +1,52 @@
+.gameEndOptions {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease 900ms;
+}
+
+.wrapperPlayers--openedOptions .gameEndOptions {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.gameEndOptions-wrapper {
+  position: absolute;
+  height: 50%;
+  width: 100%;
+  pointer-events: none;
+}
+
+.gameEndOptions-wrapper--2 {
+    bottom: 0;
+}
+
+.gameEndOptions-option {
+  font-family: inherit;
+  font-size: 35px;
+  display: block;
+  width: 80vw;
+  height: 40vw;
+  border-radius: 20px 0 ;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  
+  text-transform: uppercase;
+  transition: transform 50ms ease-out;
+  font-weight: bold;
+  z-index: 1;
+  pointer-events: all;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.gameEndOptions-wrapper--1 .gameEndOptions-option {
+    color: black;
+    background-color: rgba(255, 255, 255, .65);
+    transform: translate(-50%, -50%);
+}
+
+.gameEndOptions-wrapper--2 .gameEndOptions-option {
+    color: #FFF;
+    background-color: rgba(0, 0, 0, .65);
+    transform: translate(-50%, calc(-50% + 12px));
+}
