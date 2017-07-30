@@ -16,8 +16,7 @@
 
     <script>
         window.onload = function(){
-          Screen
-              .render(InitialScreen)
+          Game.state(GameState.INIT)
         }
     </script>
 
@@ -28,13 +27,14 @@
     <script src="modules/multiplayer/Server.js"></script>
 
     <script src="modules/utils/Objectz.js"></script>
-
     <script src="componentsFramework/DOM/DOMComponent.js"></script>
     <script src="componentsFramework/Component.js"></script>
     <script src="componentsFramework/Screen.js"></script>
 
-    <script src="components/OfflineGameScreen.js"></script>
     <script src="components/InitialScreen.js"></script>
-    <script src="components/GameScreen.js"></script>
+    <script src="components/OfflineGameScreen.js"></script>
+
+    <script src="modules/GameState.js"></script>
+    <script src="modules/Game.js"></script>
 </body>
 </html>

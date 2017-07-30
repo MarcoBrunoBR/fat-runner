@@ -1,9 +1,9 @@
 ((global) => {
 
     global.InitialScreen = function(props){
-        return {
+        return Objectz.compose(Component, {
             render: () => render(props)
-        }
+        })
     }
 
     const render = (props) => {
@@ -28,7 +28,7 @@
         serverConnectionPromise
             .then(connection => connection.findPlayer())
             .then(match => {
-                Screen.render(GameScreen, {match})
+                Game.state(GameState.ONLINE_START)
             })
             .catch(error => {
                 alert(error)
@@ -36,7 +36,7 @@
     }
 
     const handleOfflinePlayerStart = (event) => {
-        Screen.render(OfflineGameScreen)
+        Game.state(GameState.OFFLINE_START)
     }
 
-})(window, Objectz.compose, Component, DOMComponent, Server, Screen, OfflineGameScreen)
+})(window, Objectz.compose, Component, DOMComponent, Server)
