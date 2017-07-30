@@ -1,7 +1,7 @@
 ((global, $page) => {
-
+  // static props
   const MAX_POINTS = 20
-  
+
   const getColor = (() => {
     const colors = ['#1abc9c', '#2ecc71', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c']
     let previousColor
@@ -13,11 +13,11 @@
   })()
 
   global.OfflineGameScreen = function() {
-    const state = {
+    const state = Object.seal({
       color: getColor()
       ,winner: undefined
       ,pointCounter: 10
-    }
+    })
     
     const render = () => {
       const $component = new DOMComponent()
@@ -94,9 +94,8 @@
     }
 
     return Objectz.compose(Component, {
-      render: () => render()
-      ,willUnmount: () => willUnmount()
+      render,willUnmount
     })
   }
 
- })(window, document.body, Objectz.compose, Component)
+ })(window, document.body, Object.seal, Objectz.compose, Component)
