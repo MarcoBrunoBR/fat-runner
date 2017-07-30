@@ -28,6 +28,8 @@
       </div>
     `)
 
+    $component.on('click', handlePontos)
+
     $component.on('click', '.player1', handlePlayer1)
     $component.on('click', '.player2', handlePlayer2)
 
