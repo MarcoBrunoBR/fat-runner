@@ -1,25 +1,25 @@
-.wrap-player1,
-.wrap-player2 {
+.player--1,
+.player--2 {
   position: absolute;
   height: 50%;
   width: 100%;
   pointer-events: none;
 }
 
-.wrap-player1 {
+.player--1 {
   transform: rotate(180deg);
 }
 
-.wrap-player2 {
+.player--2 {
   bottom: 0;
 }
 
-.player, 
-.sombra {
+.player-btn, 
+.player-shadow {
   cursor: pointer;
 }
 
-.player {
+.player-btn {
   font-family: inherit;
   font-size: inherit;
   display: block;
@@ -38,16 +38,16 @@
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-.player:focus {
+.player-btn:focus {
   outline: none;
 }
 
-.player:active {
+.player-btn:active {
   transform: translate(-50%, -46.4%);
   transition: transform 50ms ease-in;
 }
 
-.player span {
+.player-btn span {
   display: block;
   pointer-events: none;
   -webkit-user-select: none;
@@ -58,7 +58,7 @@
   animation: pump 50ms linear infinite;
 }
 
-.sombra {
+.player-shadow {
   width: 40vw;
   height: 40vw;
   border-radius: 50% 0%;
@@ -67,40 +67,6 @@
   top: 54.4%;
   transform: translate(-50%, -50%);
   pointer-events: none;
-}
-
-.pontos {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 40px;
-  width: 100%;
-  background-color: rgba(0, 0, 0, .65);
-  pointer-events: none;
-}
-
-.pontos div {
-  position: absolute;
-  left: 0;
-  display: block;
-  width: 100%;
-  height: inherit;
-  background-color: rgba(255, 255, 255, .7);
-  transform-origin: left top;
-  transform: translateX(-50%);
-  transition: transform 80ms linear;
-}
-
-.pontos span {
-  position: absolute;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  font-size: 25px;
-  line-height: 40px;
-  text-align: center;
-  text-transform: uppercase;
-  color: transparent;
 }
 
 @keyframes pump {
@@ -112,17 +78,16 @@
   }
 }
 
-
-.wrapperPlayers--player1Won .player2,
-.wrapperPlayers--player1Won .player2 + .sombra,
-.wrapperPlayers--player2Won .player1,
-.wrapperPlayers--player2Won .player1 + .sombra {
+.wrapperPlayers--player1Won .player--2 .player-btn,
+.wrapperPlayers--player1Won .player--2 .player-shadow,
+.wrapperPlayers--player2Won .player--1 .player-btn,
+.wrapperPlayers--player2Won .player--1 .player-shadow {
   transform-origin: 0 0;
   animation: runnedOutOfPower 1s ease forwards;
 }
 
-.wrap-player1:before,
-.wrap-player2:before {
+.player--1:before,
+.player--2:before {
   content: "";
   display: block;
   width: 100px;
@@ -136,15 +101,10 @@
   background-clip: border-box;
 }
 
-.wrapperPlayers--player1Won .wrap-player2:before,
-.wrapperPlayers--player2Won .wrap-player1:before {
+.wrapperPlayers--player1Won .player--2:before,
+.wrapperPlayers--player2Won .player--1:before {
   transform-origin: 0 0 ;
   animation: runnedOutOfPowerGrave 2s ease;
-}
-
-.wrapperPlayers--player1Won .pontos span,
-.wrapperPlayers--player2Won .pontos span {
-  text-shadow: 0 0 2px rgba(0,0,0, .25), 0 0 3px rgba(255,255,255, .25)
 }
 
 @keyframes runnedOutOfPower {
@@ -168,28 +128,28 @@
   }
 }
 
-.player1 {
+.player--1 .player-btn {
   color: black;
   background-color: rgba(255, 255, 255, .3);
 }
 
-.player2 {
+.player--2 .player-btn {
   color: #FFF;
   background-color: rgba(0, 0, 0, .3);
 }
 
-.wrap-player1 .sombra {
+.player--1 .player-shadow {
   background-color: rgba(255, 255, 255, .5);
 }
-.wrap-player2 .sombra {
+.player--2 .player-shadow {
   background-color: rgba(0, 0 ,0,.5);
 }
 
-.wrap-player1:before {
+.player--1:before {
   background-color: rgba(0, 0 ,0,.5);
   border: 15px solid rgba(0, 0 ,0,.3);
 }
-.wrap-player2:before {
+.player--2:before {
   background-color: rgba(255, 255, 255, .3);
   border: 15px solid rgba(255, 255, 255, .5);
 }

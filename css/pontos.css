@@ -1,0 +1,38 @@
+.pontos {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 40px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .65);
+  pointer-events: none;
+}
+
+.pontos-barra {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: inherit;
+  background-color: rgba(255, 255, 255, .7);
+  transform-origin: left top;
+  transform: translateX(-50%);
+  transition: transform 80ms linear;
+}
+
+.pontos-texto {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  font-size: 25px;
+  line-height: 40px;
+  text-align: center;
+  text-transform: uppercase;
+  color: transparent;
+}
+
+.wrapperPlayers--player1Won .pontos .pontos-texto,
+.wrapperPlayers--player2Won .pontos .pontos-texto {
+  text-shadow: 0 0 2px rgba(0,0,0, .25), 0 0 3px rgba(255,255,255, .25)
+}

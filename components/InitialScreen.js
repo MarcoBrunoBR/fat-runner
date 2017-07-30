@@ -27,9 +27,7 @@
         server.connect()
             .then(connection => connection.findPlayer())
             .then(remoteMatch => {
-                Game.state(GameState.ONLINE_START, {
-                    remoteMatch
-                })
+                Game.state(GameState.ONLINE_START, {remoteMatch})
             })
             .catch(error => {
                 console.error(error)

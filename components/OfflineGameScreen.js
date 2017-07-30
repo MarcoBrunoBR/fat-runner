@@ -23,23 +23,23 @@
       const $component = new DOMComponent()
 
       $component.html(`
-        <div class="wrap-player1">
-          <button class="player player1">
+        <div class="player player--1">
+          <button class="player-btn player-btn--1">
             <span>!</span>
           </button>
-          <div class="sombra"></div>
+          <div class="player-shadow"></div>
         </div>
 
         <div class="pontos">
-          <div></div>
-          <span>You Win!</span>
+          <div class="pontos-barra"></div>
+          <span class="pontos-texto">You Win!</span>
         </div>
 
-        <div class="wrap-player2">
-          <button class="player player2">
+        <div class="player player--2">
+          <button class="player-btn player-btn--2">
             <span>!</span>
           </button>
-          <div class="sombra"></div>
+          <div class="player-shadow"></div>
         </div>
       `)
 
@@ -54,8 +54,12 @@
         }
         else {
           $msgVitoria.style.color = state.color
-          if (state.winner == 1) $component.addClass('wrapperPlayers--player1Won')
-          if (state.winner == 2) $component.addClass('wrapperPlayers--player2Won')
+          if (state.winner == 1){
+            $component.addClass('wrapperPlayers--player1Won')
+          }
+          if (state.winner == 2) {
+            $component.addClass('wrapperPlayers--player2Won')
+          }
         }
       })
 
@@ -74,8 +78,8 @@
         
         state.color = getColor()
 
-        if ($origin.classList.contains('player1')) handlePlayer1()
-        if ($origin.classList.contains('player2')) handlePlayer2()
+        if ($origin.classList.contains('player-btn--1')) handlePlayer1()
+        if ($origin.classList.contains('player-btn--2')) handlePlayer2()
 
         if (state.pointCounter == MAX_POINTS) {
           state.winner = 2
@@ -85,14 +89,6 @@
       }
     }
 
-    document.addEventListener('touchmove', function (event) {
-      if (event.scale !== 1) { event.preventDefault() }
-    }, false)
-    
-    document.addEventListener('touchend', function (event) {
-      event.preventDefault()
-    }, false);
-
     const handlePlayer1 = (event) => {
       state.pointCounter--
     }
@@ -100,6 +96,14 @@
     const handlePlayer2 = (event) => {
       state.pointCounter++
     }
+
+    document.addEventListener('touchmove', function (event) {
+      if (event.scale !== 1) { event.preventDefault() }
+    }, false)
+    
+    document.addEventListener('touchend', function (event) {
+      event.preventDefault()
+    }, false);
 
     return Objectz.compose(Component, {
       render,willUnmount
