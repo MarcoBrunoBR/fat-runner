@@ -30,16 +30,23 @@
 
     $component.on('click', handlePontos)
 
-    $component.on('click', '.player1', handlePlayer1)
-    $component.on('click', '.player2', handlePlayer2)
-
-
+    $component.on('touchend', handleTouch)
 
     return $component
   }
 
-  const maxPoints = 8
-  let player1AndPlayer2 = 4
+  const maxPoints = 20
+  let player1AndPlayer2 = 10
+
+  const handleTouch = function(event) {
+    const $origin = event.path[0]
+
+    console.log($origin)
+
+    if ($origin.classList.contains('player1')) handlePlayer1()
+    if ($origin.classList.contains('player2')) handlePlayer2()
+    handlePontos.call(this)
+  }
 
   const handlePlayer1 = (event) => {
     player1AndPlayer2++
