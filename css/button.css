@@ -75,6 +75,7 @@
   height: 40px;
   width: 100%;
   background-color: rgba(0, 0, 0, .65);
+  pointer-events: none;
 }
 .pontos div {
   position: absolute;
@@ -86,6 +87,17 @@
   transform-origin: left top;
   transform: translateX(-50%);
   transition: transform 80ms linear;
+}
+.pontos span {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  font-size: 25px;
+  line-height: 40px;
+  text-align: center;
+  text-transform: uppercase;
+  color: transparent;
 }
 
 @keyframes pump {
@@ -100,9 +112,9 @@
 
 .wrapperPlayers--player1Won .player2,
 .wrapperPlayers--player1Won .player2 + .sombra,
-.wrapperPlayers--player2Won .player1, 
+.wrapperPlayers--player2Won .player1,
 .wrapperPlayers--player2Won .player1 + .sombra {
-  transform-origin: 0 0; 
+  transform-origin: 0 0;
   animation: runnedOutOfPower 1s ease forwards;
 }
 

@@ -24,6 +24,7 @@
 
       <div class="pontos">
         <div></div>
+        <span>You Win!</span>
       </div>
 
       <div class="wrap-player2">
@@ -56,7 +57,7 @@
   }
 
   const handleTouch = function(event) {
-    if(state.isHappening){  
+    if(state.isHappening){
       const $origin = event.path[0]
 
       state.color = colors[Math.round(Math.random()*7)]
@@ -66,6 +67,7 @@
 
       if (pointCounter == maxPoints || pointCounter == 0) {
         state.isHappening = false
+        this.querySelector('.pontos span').style.color = state.color
         startWinnerAnimation(pointCounter, this)
       }
     }
@@ -78,7 +80,4 @@
   const handlePlayer2 = (event) => {
     pointCounter++
   }
-
-
-
 })(window, document)
