@@ -96,3 +96,54 @@
     transform: scale(1.5);
   }
 }
+
+
+.wrapperPlayers--player1Won .player2,
+.wrapperPlayers--player1Won .player2 + .sombra,
+.wrapperPlayers--player2Won .player1, 
+.wrapperPlayers--player2Won .player1 + .sombra {
+  transform-origin: 0 0; 
+  animation: runnedOutOfPower 1s ease forwards;
+}
+
+.wrap-player1:before,
+.wrap-player2:before {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  transform: scale(0) translate(-50%, -50%);
+  background-color: #7f8c8d;
+  box-shadow: inset 0 0 5px 15px rgba(255,255,255,.25);
+}
+
+.wrapperPlayers--player1Won .wrap-player2:before,
+.wrapperPlayers--player2Won .wrap-player1:before {
+  transform-origin: 0 0 ;
+  animation: runnedOutOfPowerGrave 2s ease;
+}
+
+@keyframes runnedOutOfPower {
+  0% {
+    transform: rotate(0deg) scale(1) translate(-50%, -50%);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(0) translate(-100%, -100%);
+  }
+}
+
+
+@keyframes runnedOutOfPowerGrave {
+  0%, 100% {
+    transform: scale(0) translate(-50%, -50%);
+  }
+
+  50% {
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
