@@ -53,7 +53,6 @@
             requestAnimationFrame(function raf(){
                 $page.style.backgroundColor = state.color
                 $pontos.style.color = state.color
-
                 if (!state.startingGame) requestAnimationFrame(raf)
             })
 

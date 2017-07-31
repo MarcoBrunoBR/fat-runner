@@ -86,19 +86,14 @@
       $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
       $component.on('touchend', '.gameEndOptions-option--menu', handleMenu)
 
-      $component.on('touchmove', function(event) {
-        if (event.scale !== 1) { event.preventDefault() }
-      })
-
-      $component.on('touchend', function (event) {
-        event.preventDefault()
-      })
+      BrowserCompatibility.setIphoneFix()
 
       return $component
     }
 
     const willUnmount = () => {
       $page.style.backgroundColor = ""
+      BrowserCompatibility.unsetIphoneFix()
     }
 
     const handleTouch = function(event) {
@@ -139,4 +134,4 @@
     })
   }
 
- })(window, document.body, Object.seal, Objectz.compose, Component)
+ })(window, document.body, Object.seal, Objectz.compose, Component, BrowserCompatibility)
