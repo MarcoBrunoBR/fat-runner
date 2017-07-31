@@ -45,6 +45,10 @@
                 </nav>
             `)
 
+            $component.on("touchend", ".player", handleClickLogo)
+            $component.on("click", ".startOnline", handleOnlinePlayerStart)
+            $component.on("click", ".startOffline", handleOfflinePlayerStart)
+
             const $pontos =  $component.find('.pontos')
             requestAnimationFrame(function raf(){
                 $page.style.backgroundColor = state.color
@@ -75,14 +79,6 @@
         const handleOfflinePlayerStart = function(event){
             Game.state(GameState.OFFLINE_START)
         }
-
-        console.log("Die")
-        document.addEventListener("click", function(event){
-            console.log("aLo")
-            if(event.target.classList.contains("startOnline")) handleOnlinePlayerStart()
-
-            if(event.target.classList.contains("startOffline")) handleOfflinePlayerStart()
-        })
 
         return Objectz.compose(Component, {
             render: () => render(props),

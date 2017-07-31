@@ -86,6 +86,14 @@
       $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
       $component.on('touchend', '.gameEndOptions-option--menu', handleMenu)
 
+      $component.on('touchmove', function(event) {
+        if (event.scale !== 1) { event.preventDefault() }
+      })
+
+      $component.on('touchend', function (event) {
+        event.preventDefault()
+      })
+
       return $component
     }
 
@@ -125,14 +133,6 @@
     const handleMenu = (event) => {
       Game.state(GameState.INIT)
     }
-
-    document.addEventListener('touchmove', function (event) {
-      if (event.scale !== 1) { event.preventDefault() }
-    }, false)
-
-    document.addEventListener('touchend', function (event) {
-      event.preventDefault()
-    }, false);
 
     return Objectz.compose(Component, {
       render,willUnmount
