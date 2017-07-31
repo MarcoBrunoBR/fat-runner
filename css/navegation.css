@@ -19,4 +19,5 @@
 
 .navigation-item img {
   width: 45%;
+  max-height: calc(100% - 20px); 
 }
