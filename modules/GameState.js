@@ -4,6 +4,7 @@
         "INIT"
         ,"ONLINE_START"
         ,"OFFLINE_START"
+        ,"SINGLE_PLAYER"
     ]
 
     global.GameState = states.reduce((obj, state) => {

@@ -10,8 +10,6 @@
       }
     })()
 
-    const server = new Server("https://fatrunner-server.herokuapp.com")
-
     global.InitialScreen = function(props){
         const state = {
             color: getColor(),
@@ -30,24 +28,24 @@
                 </div>
 
                 <div class="pontos">
-                    <div class="startOnline pontos-barra pontos-barra--left">Online</div>
-                    <div class="startOffline pontos-barra--right">Offline</div>
+                    <div class="startOnePlayer pontos-barra pontos-barra--left">1 Player</div>
+                    <div class="startTwoPlayers pontos-barra--right">2 players</div>
                 </div>
 
                 <nav class="navigation">
                     <figure class="navigation-item navigation-item--online">
-                        <img class="startOnline" src="img/online.png">
+                        <img class="startOnePlayer" src="img/online.png">
                     </figure>
 
                     <figure class="navigation-item navigation-item--offline">
-                        <img class="startOffline" src="img/offline.png">
+                        <img class="startTwoPlayers" src="img/offline.png">
                     </figure>
                 </nav>
             `)
 
             $component.on("touchend", ".player", handleClickLogo)
-            $component.on("click", ".startOnline", handleOnlinePlayerStart)
-            $component.on("click", ".startOffline", handleOfflinePlayerStart)
+            $component.on("click", ".startOnePlayer", handleSinglePlayerStart)
+            $component.on("click", ".startTwoPlayers", handleTwoPlayersStart)
 
             const $pontos =  $component.find('.pontos')
             requestAnimationFrame(function raf(){
@@ -63,19 +61,11 @@
             state.color = getColor()
         }
 
-        const handleOnlinePlayerStart = function(event){
-            server.connect()
-                .then(connection => connection.findPlayer())
-                .then(remoteMatch => {
-                    Game.state(GameState.ONLINE_START, {remoteMatch})
-                })
-                .catch(error => {
-                    console.error(error)
-                    server.disconnect()
-                })
+        const handleSinglePlayerStart = function(event){
+            Game.state(GameState.SINGLE_PLAYER)
         }
 
-        const handleOfflinePlayerStart = function(event){
+        const handleTwoPlayersStart = function(event){
             Game.state(GameState.OFFLINE_START)
         }
 
