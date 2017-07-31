@@ -21,9 +21,10 @@
                     callback = otherArgs[0]
                 }
                 if(elementSelector){
-                    const $eventElements = [...$domElement.querySelectorAll(elementSelector)]
+                    let $eventElements = [...$domElement.querySelectorAll(elementSelector)]
                     if($eventElements.length){
                         $domElement.addEventListener(eventName, function(event){
+                            console.log(elementSelector)
                             if($eventElements.indexOf(event.target)+1){
                                 callback.bind(this)(event)
                             }

@@ -32,13 +32,13 @@
 
         <div class="gameEndOptions">
           <div class="gameEndOptions-wrapper gameEndOptions-wrapper--1">
-            <button class="gameEndOptions-option">
+            <button class="gameEndOptions-option gameEndOptions-option--menu">
               Menu
             </button>
             <button class="gameEndOptions-shadow"></button>
           </div>
           <div class="gameEndOptions-wrapper gameEndOptions-wrapper--2">
-            <button class="gameEndOptions-option">
+            <button class="gameEndOptions-option gameEndOptions-option--playAgain">
               Play Again
             </button>
           </div>
@@ -83,6 +83,9 @@
 
       $component.on('touchend', handleTouch)
 
+      $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
+      $component.on('touchend', '.gameEndOptions-option--menu', handleMenu)
+
       return $component
     }
 
@@ -113,6 +116,14 @@
 
     const handlePlayer2 = (event) => {
       state.pointCounter++
+    }
+
+    const handlePlayAgain= (event) => {
+      Game.state(GameState.OFFLINE_START)
+    }
+
+    const handleMenu = (event) => {
+      Game.state(GameState.INIT)
     }
 
     document.addEventListener('touchmove', function (event) {

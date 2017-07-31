@@ -10,82 +10,87 @@
       }
     })()
 
-    const state = {
-      color: getColor(),
-      startingGame: false
-    }
+    const server = new Server("https://fatrunner-server.herokuapp.com")
 
     global.InitialScreen = function(props){
+        const state = {
+            color: getColor(),
+            startingGame: false
+        }
+
+        const render = (props) => {
+            const $component = new DOMComponent()
+
+            $component.html(`
+                <div class="player player--1">
+                    <button class="player-btn player-btn--1">
+                        <span>!</span>
+                    </button>
+                    <div class="player-shadow"></div>
+                </div>
+
+                <div class="pontos">
+                    <div class="startOnline pontos-barra pontos-barra--left">Online</div>
+                    <div class="startOffline pontos-barra--right">Offline</div>
+                </div>
+
+                <nav class="navigation">
+                    <figure class="navigation-item navigation-item--online">
+                        <img class="startOnline" src="img/online.png">
+                    </figure>
+
+                    <figure class="navigation-item navigation-item--offline">
+                        <img class="startOffline" src="img/offline.png">
+                    </figure>
+                </nav>
+            `)
+
+            const $pontos =  $component.find('.pontos')
+            requestAnimationFrame(function raf(){
+                $page.style.backgroundColor = state.color
+                $pontos.style.color = state.color
+
+                if (!state.startingGame) requestAnimationFrame(raf)
+            })
+
+            return $component
+        }
+
+        const handleClickLogo = function(event){
+            state.color = getColor()
+        }
+
+        const handleOnlinePlayerStart = function(event){
+            server.connect()
+                .then(connection => connection.findPlayer())
+                .then(remoteMatch => {
+                    Game.state(GameState.ONLINE_START, {remoteMatch})
+                })
+                .catch(error => {
+                    console.error(error)
+                    server.disconnect()
+                })
+        }
+
+        const handleOfflinePlayerStart = function(event){
+            Game.state(GameState.OFFLINE_START)
+        }
+
+        console.log("Die")
+        document.addEventListener("click", function(event){
+            console.log("aLo")
+            if(event.target.classList.contains("startOnline")) handleOnlinePlayerStart()
+
+            if(event.target.classList.contains("startOffline")) handleOfflinePlayerStart()
+        })
+
         return Objectz.compose(Component, {
             render: () => render(props),
             willUnmount: () => {
-              state.startingGame = true
+                state.startingGame = true
             }
         })
     }
 
-    const render = (props) => {
-        const $component = new DOMComponent()
-
-        $component.html(`
-          <div class="player player--1">
-            <button class="player-btn player-btn--1">
-              <span>!</span>
-            </button>
-            <div class="player-shadow"></div>
-          </div>
-
-          <div class="pontos">
-            <div class="startOnline pontos-barra pontos-barra--left">Online</div>
-            <div class="startOffline pontos-barra--right">Offline</div>
-          </div>
-
-          <nav class="navigation">
-            <figure class="navigation-item navigation-item--online">
-              <img class="startOnline" src="img/online.png">
-            </figure>
-
-            <figure class="navigation-item navigation-item--offline">
-              <img class="startOffline" src="img/offline.png">
-            </figure>
-          </nav>
-        `)
-
-        $component.on("click", ".startOnline", handleOnlinePlayerStart)
-        $component.on("click", ".startOffline", handleOfflinePlayerStart)
-        $component.on("touchend", ".player-btn", handleClickLogo)
-
-        const $pontos =  $component.find('.pontos')
-        requestAnimationFrame(function raf(){
-          $page.style.backgroundColor = state.color
-          $pontos.style.color = state.color
-
-          if (!state.startingGame) requestAnimationFrame(raf)
-        })
-
-        return $component
-    }
-
-    const server = new Server("https://fatrunner-server.herokuapp.com")
-
-    const handleClickLogo = (event) => {
-      state.color = getColor()
-    }
-
-    const handleOnlinePlayerStart = (event) => {
-        server.connect()
-            .then(connection => connection.findPlayer())
-            .then(remoteMatch => {
-                Game.state(GameState.ONLINE_START, {remoteMatch})
-            })
-            .catch(error => {
-                console.error(error)
-                server.disconnect()
-            })
-    }
-
-    const handleOfflinePlayerStart = (event) => {
-        Game.state(GameState.OFFLINE_START)
-    }
-
 })(window, document.body,Objectz.compose, Component, DOMComponent, Server)
+
