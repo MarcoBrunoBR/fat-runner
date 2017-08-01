@@ -1,0 +1,10 @@
+.initCounter {
+     background-color: rgba(0,0,0,.5); 
+    color: white;
+    text-align: center;
+    width: 100%;
+    /* position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4; */
+}

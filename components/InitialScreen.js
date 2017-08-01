@@ -20,7 +20,7 @@
             const $component = new DOMComponent()
 
             $component.html(`
-                <div class="player player--1">
+                <div class="player player--1 ">
                     <button class="player-btn player-btn--1">
                         <span>!</span>
                     </button>
@@ -43,11 +43,12 @@
                 </nav>
             `)
 
-            $component.on("touchend", ".player", handleClickLogo)
+            $component.on("click", ".player-btn", handleClickLogo)
             $component.on("click", ".startOnePlayer", handleSinglePlayerStart)
             $component.on("click", ".startTwoPlayers", handleTwoPlayersStart)
 
             const $pontos =  $component.find('.pontos')
+            
             requestAnimationFrame(function raf(){
                 $page.style.backgroundColor = state.color
                 $pontos.style.color = state.color
@@ -62,7 +63,7 @@
         }
 
         const handleSinglePlayerStart = function(event){
-            Game.state(GameState.SINGLE_PLAYER)
+            Game.state(GameState.SINGLE_PLAYER, {botMatch: new BotMatch()})
         }
 
         const handleTwoPlayersStart = function(event){
@@ -77,5 +78,5 @@
         })
     }
 
-})(window, document.body,Objectz.compose, Component, DOMComponent, Server)
+})(window, document.body,Objectz.compose, Component, DOMComponent, BotMatch)
 

@@ -21,4 +21,4 @@
 
         })
     }
-})(window)
+})(window, Server)

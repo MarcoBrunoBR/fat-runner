@@ -37,8 +37,12 @@
   transition: transform 50ms ease-out;
   font-weight: bold;
   z-index: 1;
-  pointer-events: all;
+  pointer-events: none;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.wrapperPlayers--openedOptions .gameEndOptions-option {
+    pointer-events: all;
 }
 
 .gameEndOptions-wrapper--1 .gameEndOptions-option {

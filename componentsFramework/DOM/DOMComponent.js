@@ -35,6 +35,32 @@
                     })
                 }
             }
+            ,once: (eventName, ...otherArgs) => {
+                let elementSelector
+                let callback
+                if(otherArgs.length == 2){
+                    elementSelector = otherArgs[0]
+                    callback = otherArgs[1]
+                } else {
+                    callback = otherArgs[0]
+                }
+                if(elementSelector){
+                    const $eventElements = [...$domElement.querySelectorAll(elementSelector)]
+                    if($eventElements.length){
+                        $domElement.addEventListener(eventName, function handler(event){
+                            if($eventElements.indexOf(event.target)+1){
+                                callback.bind(this)(event)
+                                $domElement.removeEventListener(eventName, handler)
+                            }
+                        })
+                    }
+                } else {
+                    $domElement.addEventListener(eventName, function handler(event){
+                        callback.bind(this)(event)
+                        $domElement.removeEventListener(eventName, handler)
+                    })
+                }
+            }
             ,getElement: () => $domElement
         }
     }
