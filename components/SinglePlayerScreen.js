@@ -67,6 +67,8 @@
       const $contador = $component.find('.initCounter')
       const $contadorNumero = $component.find('.initCounter-numero')
 
+      const $playerBot = $component.find('.player-btn--1')
+
       requestAnimationFrame(function raf(){
         $page.style.backgroundColor = state.color
         $barraPontos.style.transform = `translateX(-${((state.pointCounter*100)/MAX_POINTS)}%)`
@@ -94,9 +96,10 @@
           setTimeout(() => {
             $contador.remove()
           }, 500)
+          $playerBot.classList.toggle('player-btn--bot')
         }
       })    
-
+     
       $component.once('touchstart', '.player-btn--2' , handleStart)
       $component.on('touchend', '.player-btn--2' , handleTouch)
       $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
@@ -137,7 +140,6 @@
       if(!state.winner && state.started){
         const $origin = event.path[0]
 
-        state.color = getColor()
         botMatch.click()
 
         if (state.pointCounter == MAX_POINTS) {
@@ -153,6 +155,7 @@
     })
 
     botMatch.onPointUpdate((points) => {
+      state.color = getColor()
       state.pointCounter = points
     })
 
