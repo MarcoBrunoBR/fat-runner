@@ -1,6 +1,4 @@
 ((global, $page) => {
-  const MAX_POINTS = 20
-
   const getColor = (() => {
     const colors = ['#1abc9c', '#2ecc71', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c']
     let previousColor
@@ -14,11 +12,13 @@
   global.SinglePlayerScreen = function({botMatch} = {}) {
     const state = Object.seal({
       color: getColor()
+      ,pointCounter: botMatch.MAX_POINTS / 2
       ,winner: undefined
-      ,pointCounter: 10
-      ,startCounter: undefined
       ,started: false
+      ,startCounter: undefined
     })
+
+    const MAX_POINTS = botMatch.MAX_POINTS
 
     const render = () => {
       const $component = new DOMComponent()
@@ -47,7 +47,7 @@
 
         <div class="pontos">
           <div class="pontos-barra"></div>
-          <span class="pontos-texto">You Win!</span>
+          <span class="pontos-texto"></span>
         </div>
 
         <div class="initCounter">
@@ -66,7 +66,6 @@
       const $barraPontos = $component.find('.pontos div')
       const $contador = $component.find('.initCounter')
       const $contadorNumero = $component.find('.initCounter-numero')
-
       const $playerBot = $component.find('.player-btn--1')
 
       requestAnimationFrame(function raf(){
@@ -77,8 +76,14 @@
         }
         else {
           $msgVitoria.style.color = state.color
-          if (state.winner == 1) $component.addClass('wrapperPlayers--player1Won')
-          if (state.winner == 2) $component.addClass('wrapperPlayers--player2Won')
+          if (state.winner == 1) {
+            $component.addClass('wrapperPlayers--player1Won')
+            $msgVitoria.textContent = "You Lose!"
+          }
+          if (state.winner == 2) {
+            $component.addClass('wrapperPlayers--player2Won')
+            $msgVitoria.textContent = "You Win!"
+          }
           $component.on('transitionend', ".pontos-texto", () => {
             $component.addClass('wrapperPlayers--openedOptions')
           })
@@ -87,20 +92,19 @@
 
       requestAnimationFrame(function raf(){
         if(state.startCounter != undefined){
-          $contador.classList.add("'.initCounter--active")
-          $contadorNumero.innerText = state.startCounter == 0 && "Start!" || state.startCounter
+          $contador.style.backgroundColor = state.startCounter == 0 && "transparent" || ""
+          $contadorNumero.textContent = state.startCounter == 0 && "Go!" || state.startCounter
         }
         if (!state.started) {
           requestAnimationFrame(raf)
         } else {
           setTimeout(() => {
-            $contador.remove()
+            $contador.style.display = "none"
           }, 500)
           $playerBot.classList.toggle('player-btn--bot')
         }
-      })    
-     
-      $component.once('touchstart', '.player-btn--2' , handleStart)
+      })  
+      
       $component.on('touchend', '.player-btn--2' , handleTouch)
       $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
       $component.on('touchend', '.gameEndOptions-option--menu', handleMenu)
@@ -108,11 +112,22 @@
       return $component
     }
 
+    const didMount = () => {
+      botMatch.onReadyToStart(() => {
+        countdown()
+          .then(() => {
+            state.started = true
+            botMatch.startMatch()
+          })
+      })
+      botMatch.sayIAmReadyToStart()
+    }
+
     const willUnmount = () => {
       $page.style.backgroundColor = ""
     }
 
-    const startCounter = () => (
+    const countdown = () => (
       new Promise((resolve, reject) => {
         state.startCounter = 3
         const counterInterval = setInterval(() => {
@@ -125,38 +140,19 @@
       })
     )
 
-    const handleStart = function(event){
-      botMatch.onReadyToStart(() => {
-        startCounter()
-          .then(() => {
-            state.started = true
-            botMatch.startMatch()
-          })
-      })
-      botMatch.sayIAmReadyToStart()
-    }
-
     const handleTouch = function(event) {
       if(!state.winner && state.started){
-        const $origin = event.path[0]
-
         botMatch.click()
-
-        if (state.pointCounter == MAX_POINTS) {
-          state.winner = 2
-        } else if(state.pointCounter == 0){
-          state.winner = 1
-        }
       }
     }
-
-    botMatch.onEnd((winner) => {
-      state.winner = winner
-    })
 
     botMatch.onPointUpdate((points) => {
       state.color = getColor()
       state.pointCounter = points
+    })
+
+    botMatch.onEnd((winner) => {
+      state.winner = winner
     })
 
     const handlePlayAgain= (event) => {
@@ -168,7 +164,7 @@
     }
 
     return Objectz.compose(Component, {
-      render,willUnmount
+      render,willUnmount, didMount
     })
   }
 
