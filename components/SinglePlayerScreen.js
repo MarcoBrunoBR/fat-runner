@@ -77,6 +77,9 @@
           $msgVitoria.style.color = state.color
           if (state.winner == 1) $component.addClass('wrapperPlayers--player1Won')
           if (state.winner == 2) $component.addClass('wrapperPlayers--player2Won')
+          $component.on('transitionend', ".pontos-texto", () => {
+            $component.addClass('wrapperPlayers--openedOptions')
+          })
         }
       })
 
@@ -96,6 +99,8 @@
 
       $component.once('touchstart', '.player-btn--2' , handleStart)
       $component.on('touchend', '.player-btn--2' , handleTouch)
+      $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
+      $component.on('touchend', '.gameEndOptions-option--menu', handleMenu)
 
       return $component
     }
@@ -143,13 +148,25 @@
       }
     }
 
+    botMatch.onEnd((winner) => {
+      state.winner = winner
+    })
+
     botMatch.onPointUpdate((points) => {
       state.pointCounter = points
     })
+
+    const handlePlayAgain= (event) => {
+      Game.state(GameState.SINGLE_PLAYER, {botMatch: new BotMatch()})
+    }
+
+    const handleMenu = (event) => {
+      Game.state(GameState.INIT)
+    }
 
     return Objectz.compose(Component, {
       render,willUnmount
     })
   }
 
- })(window, document.body, Object.seal, Objectz.compose, Component)
+ })(window, document.body, Object.seal, Objectz.compose, Component, BotMatch)
