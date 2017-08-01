@@ -1,5 +1,5 @@
 ((global, compose) => {
-    const screen = document.querySelector("#screen")
+    const gameScreen = document.querySelector("#gameScreen")
 
     let previousComponent = undefined
 
@@ -9,8 +9,8 @@
             ;((previousComponent && previousComponent.willUnmount()) || Promise.resolve())
                 .then(() => component.willMount() || Promise.resolve())
                 .then(() => {
-                    screen.innerHTML = ''
-                    screen.appendChild(component.render().getElement())
+                    gameScreen.innerHTML = ''
+                    gameScreen.appendChild(component.render().getElement())
                     return component.didMount() || Promise.resolve()
                 })
                 .then(() => {
@@ -19,5 +19,15 @@
                 .catch(error => console.error(error))
         }
     })
+
+    screen.lockOrientationUniversal = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation
+
+    if (screen.lockOrientationUniversal && screen.lockOrientationUniversal("portrait")) {
+        
+    } else if(!screen.lockOrientationUniversal){
+        screen.orientation.lock("portrait")
+    } else {
+        console.log("failed to lock")
+    }
 
 })(window, Objectz.compose, Component)
