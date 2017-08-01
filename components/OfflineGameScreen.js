@@ -122,7 +122,7 @@
     }
 
     const handlePlayAgain= (event) => {
-      Game.state(GameState.OFFLINE_START)
+      Game.state(GameState.OFFLINE_2PLAYER)
     }
 
     const handleMenu = (event) => {

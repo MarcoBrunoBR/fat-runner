@@ -67,7 +67,7 @@
         }
 
         const handleTwoPlayersStart = function(event){
-            Game.state(GameState.OFFLINE_START)
+            Game.state(GameState.OFFLINE_2PLAYER)
         }
 
         return Objectz.compose(Component, {
