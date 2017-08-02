@@ -112,15 +112,13 @@
       return $component
     }
 
+    const playerController = botMatch.getControllers()[0]
+
     const didMount = () => {
-      botMatch.onReadyToStart(() => {
+      botMatch.onReadyToStart(() => (
         countdown()
-          .then(() => {
-            state.started = true
-            botMatch.startMatch()
-          })
-      })
-      botMatch.sayIAmReadyToStart()
+      ))
+      playerController.sayIAmReadyToStart()
     }
 
     const willUnmount = () => {
@@ -142,16 +140,17 @@
 
     const handleTouch = function(event) {
       if(!state.winner && state.started){
-        botMatch.click()
+        playerController.click()
       }
     }
 
-    botMatch.onPointUpdate((points) => {
-      state.color = getColor()
-      state.pointCounter = points
+    botMatch.onStart(() => {
+      state.started = true
     })
 
-    botMatch.onEnd((winner) => {
+    botMatch.onUpdatePoints((points, winner) => {
+      state.color = getColor()
+      state.pointCounter = points
       state.winner = winner
     })
 
