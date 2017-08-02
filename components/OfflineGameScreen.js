@@ -1,6 +1,5 @@
 ((global, $page) => {
   // static props
-  const MAX_POINTS = 20
 
   const getColor = (() => {
     const colors = ['#1abc9c', '#2ecc71', '#34495e', '#f1c40f', '#e67e22', '#e74c3c']
@@ -12,12 +11,14 @@
     }
   })()
 
-  global.OfflineGameScreen = function() {
+  global.OfflineGameScreen = function({match} = {}) {
     const state = Object.seal({
       color: getColor()
       ,winner: undefined
       ,pointCounter: 10
     })
+
+    const MAX_POINTS = match.MAX_POINTS
 
     const render = () => {
       const $component = new DOMComponent()
@@ -81,7 +82,8 @@
         }
       })
 
-      $component.on('touchend', handleTouch)
+      $component.on('touchend', ".player-btn--1", handlePlayer1)
+      $component.on('touchend', ".player-btn--2", handlePlayer2)
 
       $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
       $component.on('touchend', '.gameEndOptions-option--menu', handleMenu)
@@ -91,38 +93,34 @@
       return $component
     }
 
+    const playerControllers = match.getControllers()
+
+    const didMount = () => {
+      playerControllers[0].sayIAmReadyToStart()
+      playerControllers[1].sayIAmReadyToStart()
+    }
+
     const willUnmount = () => {
       $page.style.backgroundColor = ""
       BrowserCompatibility.unsetIphoneFix()
     }
 
-    const handleTouch = function(event) {
-      if(!state.winner){
-        const $origin = event.target
-
-        state.color = getColor()
-
-        if ($origin.classList.contains('player-btn--1')) handlePlayer1()
-        if ($origin.classList.contains('player-btn--2')) handlePlayer2()
-
-        if (state.pointCounter == MAX_POINTS) {
-          state.winner = 2
-        } else if(state.pointCounter == 0){
-          state.winner = 1
-        }
-      }
-    }
+    match.onUpdatePoints((points, winner) => {
+      state.color = getColor()
+      state.pointCounter = points
+      state.winner = winner
+    })
 
     const handlePlayer1 = (event) => {
-      state.pointCounter--
+      playerControllers[0].click()
     }
 
     const handlePlayer2 = (event) => {
-      state.pointCounter++
+      playerControllers[1].click()
     }
 
-    const handlePlayAgain= (event) => {
-      Game.state(GameState.OFFLINE_2PLAYER)
+    const handlePlayAgain = (event) => {
+      Game.state(GameState.OFFLINE_2PLAYER, {match: new Match()})
     }
 
     const handleMenu = (event) => {

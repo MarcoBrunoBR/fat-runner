@@ -1,5 +1,5 @@
 ((global) => {
-    global.Match = function({MAX_POINTS = 20, player1, player2}){
+    global.Match = function({MAX_POINTS = 20, player1 = new Player(), player2 = new Player()} = {}){
 
         const state = Object.seal({
             pointCounter: MAX_POINTS / 2
@@ -67,4 +67,4 @@
         }
     }
 
-})(window, EventEmitter2)
+})(window, Player, EventEmitter2)
