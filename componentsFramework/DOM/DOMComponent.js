@@ -1,8 +1,31 @@
 ((global)=>{
-
+    
     global.DOMComponent = function(){
 
         const $domElement = document.createElement("div")
+
+        const on = ({eventName, elementSelector, callback, once = false}) => {
+            if(elementSelector){
+                const $eventElements = [...$domElement.querySelectorAll(elementSelector)]
+                if($eventElements.length){
+                    $domElement.addEventListener(eventName, function handler(event){
+                        if($eventElements.indexOf(event.target)+1){
+                            callback.bind(this)(event)
+                            if(once){
+                                $domElement.removeEventListener(eventName, handler)
+                            }
+                        }
+                    })
+                }
+            } else {
+                $domElement.addEventListener(eventName, function handler(event){
+                    callback.bind(this)(event)
+                    if(once){
+                        $domElement.removeEventListener(eventName, handler)
+                    }
+                })
+            }
+        }
 
         return {
             html: (template) => {
@@ -20,20 +43,7 @@
                 } else {
                     callback = otherArgs[0]
                 }
-                if(elementSelector){
-                    const $eventElements = [...$domElement.querySelectorAll(elementSelector)]
-                    if($eventElements.length){
-                        $domElement.addEventListener(eventName, function(event){
-                            if($eventElements.indexOf(event.target)+1){
-                                callback.bind(this)(event)
-                            }
-                        })
-                    }
-                } else {
-                    $domElement.addEventListener(eventName, function(event){
-                        callback.bind(this)(event)
-                    })
-                }
+                on({element: $domElement, eventName, elementSelector, callback})
             }
             ,once: (eventName, ...otherArgs) => {
                 let elementSelector
@@ -44,22 +54,7 @@
                 } else {
                     callback = otherArgs[0]
                 }
-                if(elementSelector){
-                    const $eventElements = [...$domElement.querySelectorAll(elementSelector)]
-                    if($eventElements.length){
-                        $domElement.addEventListener(eventName, function handler(event){
-                            if($eventElements.indexOf(event.target)+1){
-                                callback.bind(this)(event)
-                                $domElement.removeEventListener(eventName, handler)
-                            }
-                        })
-                    }
-                } else {
-                    $domElement.addEventListener(eventName, function handler(event){
-                        callback.bind(this)(event)
-                        $domElement.removeEventListener(eventName, handler)
-                    })
-                }
+                on({element: $domElement, eventName, elementSelector, callback, once: true})
             }
             ,getElement: () => $domElement
         }
