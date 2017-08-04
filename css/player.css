@@ -43,7 +43,7 @@
 }
 
 .player-btn:active,
-.player-btn--bot {
+.player-btn--active {
   transform: translate(-50%, -46.4%);
   transition: transform 50ms ease-in;
 }
@@ -54,8 +54,8 @@
   -webkit-user-select: none;
   user-select: none;
 }
-.player-btn--bot span,
-.player:active span {
+.player:active span,
+.player-btn--active span {
   animation: pump 50ms linear infinite;
 }
 

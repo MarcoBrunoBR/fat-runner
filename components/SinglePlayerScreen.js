@@ -94,7 +94,7 @@
           setTimeout(() => {
             $contador.style.display = "none"
           }, 500)
-          $playerBot.classList.toggle('player-btn--bot')
+          $playerBot.classList.toggle('player-btn--active')
         }
       })  
       
@@ -109,7 +109,7 @@
 
     const didMount = () => {
       botMatch.onReadyToStart(() => (
-        countdown()
+        countdown(3)
       ))
       playerController.sayIAmReadyToStart()
     }
@@ -118,9 +118,9 @@
       $page.style.backgroundColor = ""
     }
 
-    const countdown = () => (
+    const countdown = (from) => (
       new Promise((resolve, reject) => {
-        state.startCounter = 3
+        state.startCounter = from
         const counterInterval = setInterval(() => {
           state.startCounter--
           if(state.startCounter == 0) {
