@@ -54,7 +54,7 @@
   -webkit-user-select: none;
   user-select: none;
 }
-.player:active span,
+.player-btn:active span,
 .player-btn--active span {
   animation: pump 50ms linear infinite;
 }
