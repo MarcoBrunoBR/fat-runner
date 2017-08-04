@@ -63,12 +63,12 @@
 
       requestAnimationFrame(function raf(){
         $page.style.backgroundColor = state.color
+        $msgVitoria.style.color = state.color
         $barraPontos.style.transform = `translateX(-${((state.pointCounter*100)/MAX_POINTS)}%)`
         if (!state.winner) {
           requestAnimationFrame(raf)
         }
         else {
-          $msgVitoria.style.color = state.color
           if (state.winner == 1) {
             $element.classList.add('wrapperPlayers--player1Won')
             $msgVitoria.textContent = "You Lose!"
@@ -107,6 +107,10 @@
 
     const playerController = botMatch.getControllers()[0]
 
+    const willMount = () => {
+      BrowserCompatibility.setIphoneFix()
+    }
+
     const didMount = () => {
       botMatch.onReadyToStart(() => (
         countdown(3)
@@ -116,6 +120,7 @@
 
     const willUnmount = () => {
       $page.style.backgroundColor = ""
+      BrowserCompatibility.unsetIphoneFix()
     }
 
     const countdown = (from) => (
@@ -156,7 +161,7 @@
     }
 
     return Objectz.compose(Component, {
-      render,willUnmount, didMount
+      render,willMount, didMount, willUnmount
     })
   }
 
