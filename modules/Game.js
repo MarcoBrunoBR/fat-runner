@@ -10,6 +10,7 @@
     global.Game = {
         state: (gameState, props) => {
             stateMap[gameState](props)
+            window.history.pushState(gameState, "", "/")
         }
     }
 
