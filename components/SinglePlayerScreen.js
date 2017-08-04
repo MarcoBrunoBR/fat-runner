@@ -1,17 +1,8 @@
 ((global, $page) => {
-  const getColor = (() => {
-    const colors = ['#1abc9c', '#2ecc71', '#9b59b6', '#34495e', '#f1c40f', '#e67e22', '#e74c3c']
-    let previousColor
-    return () => {
-      const possibleColors = colors.filter(color => color != previousColor)
-      previousColor = possibleColors[Math.round(Math.random()* (possibleColors.length - 1))]
-      return previousColor
-    }
-  })()
 
   global.SinglePlayerScreen = function({botMatch} = {}) {
     const state = Object.seal({
-      color: getColor()
+      color: Colors.getColor()
       ,pointCounter: botMatch.MAX_POINTS / 2
       ,winner: undefined
       ,started: false
@@ -151,7 +142,7 @@
     })
 
     botMatch.onUpdatePoints((points, winner) => {
-      state.color = getColor()
+      state.color = Colors.getColor()
       state.pointCounter = points
       state.winner = winner
     })
@@ -169,4 +160,4 @@
     })
   }
 
- })(window, document.body, Object.seal, Objectz.compose, Component, BotMatch, EventDelegator)
+ })(window, document.body, Object.seal, Objectz.compose, Component, BotMatch, EventDelegator, Colors)

@@ -1,18 +1,8 @@
 ((global, $page) => {
 
-    const getColor = (() => {
-      const colors = ['#1abc9c', '#2ecc71', '#34495e', '#f1c40f', '#e67e22', '#e74c3c']
-      let previousColor
-      return () => {
-        const possibleColors = colors.filter(color => color != previousColor)
-        previousColor = possibleColors[Math.round(Math.random()* (possibleColors.length - 1))]
-        return previousColor
-      }
-    })()
-
     global.InitialScreen = function(props){
         const state = {
-            color: getColor(),
+            color: Colors.getColor(),
             startingGame: false
         }
 
@@ -61,7 +51,7 @@
         }
 
         const handleClickLogo = function(event){
-            state.color = getColor()
+            state.color = Colors.getColor()
         }
 
         const handleSinglePlayerStart = function(event){
@@ -80,5 +70,5 @@
         })
     }
 
-})(window, document.body, document.dom, Objectz.compose, Component, EventDelegator, BotMatch)
+})(window, document.body, document.dom, Objectz.compose, Component, EventDelegator, BotMatch, Colors)
 
