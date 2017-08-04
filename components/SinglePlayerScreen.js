@@ -21,52 +21,54 @@
     const MAX_POINTS = botMatch.MAX_POINTS
 
     const render = () => {
-      const $component = new DOMComponent()
-
-      $component.html(`
-        <div class="player player--1">
-          <button class="player-btn player-btn--1">
-            <span>!</span>
-          </button>
-          <div class="player-shadow"></div>
-        </div>
-
-        <div class="gameEndOptions">
-          <div class="gameEndOptions-wrapper gameEndOptions-wrapper--1">
-            <button class="gameEndOptions-option gameEndOptions-option--menu">
-              Menu
+      const $element = document.dom`
+        <div>
+          <div class="player player--1">
+            <button class="player-btn player-btn--1">
+              <span>!</span>
             </button>
-            <button class="gameEndOptions-shadow"></button>
+            <div class="player-shadow"></div>
           </div>
-          <div class="gameEndOptions-wrapper gameEndOptions-wrapper--2">
-            <button class="gameEndOptions-option gameEndOptions-option--playAgain">
-              Play Again
+
+          <div class="gameEndOptions">
+            <div class="gameEndOptions-wrapper gameEndOptions-wrapper--1">
+              <button class="gameEndOptions-option gameEndOptions-option--menu">
+                Menu
+              </button>
+              <button class="gameEndOptions-shadow"></button>
+            </div>
+            <div class="gameEndOptions-wrapper gameEndOptions-wrapper--2">
+              <button class="gameEndOptions-option gameEndOptions-option--playAgain">
+                Play Again
+              </button>
+            </div>
+          </div>
+
+          <div class="pontos">
+            <div class="pontos-barra"></div>
+            <span class="pontos-texto"></span>
+          </div>
+
+          <div class="initCounter">
+            <span class="initCounter-numero"></span>
+          </div>
+
+          <div class="player player--2">
+            <button class="player-btn player-btn--2">
+              <span>!</span>
             </button>
+            <div class="player-shadow"></div>
           </div>
         </div>
+      `
 
-        <div class="pontos">
-          <div class="pontos-barra"></div>
-          <span class="pontos-texto"></span>
-        </div>
+      const $msgVitoria = $element.querySelector('.pontos span')
+      const $barraPontos = $element.querySelector('.pontos div')
+      const $contador = $element.querySelector('.initCounter')
+      const $contadorNumero = $element.querySelector('.initCounter-numero')
+      const $playerBot = $element.querySelector('.player-btn--1')
 
-        <div class="initCounter">
-          <span class="initCounter-numero"></span>
-        </div>
-
-        <div class="player player--2">
-          <button class="player-btn player-btn--2">
-            <span>!</span>
-          </button>
-          <div class="player-shadow"></div>
-        </div>
-      `)
-
-      const $msgVitoria = $component.find('.pontos span')
-      const $barraPontos = $component.find('.pontos div')
-      const $contador = $component.find('.initCounter')
-      const $contadorNumero = $component.find('.initCounter-numero')
-      const $playerBot = $component.find('.player-btn--1')
+      const {on: delegate} = new EventDelegator($element)
 
       requestAnimationFrame(function raf(){
         $page.style.backgroundColor = state.color
@@ -77,15 +79,15 @@
         else {
           $msgVitoria.style.color = state.color
           if (state.winner == 1) {
-            $component.addClass('wrapperPlayers--player1Won')
+            $element.classList.add('wrapperPlayers--player1Won')
             $msgVitoria.textContent = "You Lose!"
           }
           if (state.winner == 2) {
-            $component.addClass('wrapperPlayers--player2Won')
+            $element.classList.add('wrapperPlayers--player2Won')
             $msgVitoria.textContent = "You Win!"
           }
-          $component.on('transitionend', ".pontos-texto", () => {
-            $component.addClass('wrapperPlayers--openedOptions')
+          delegate('transitionend', ".pontos-texto", () => {
+            $element.classList.add('wrapperPlayers--openedOptions')
           })
         }
       })
@@ -105,11 +107,11 @@
         }
       })  
       
-      $component.on('touchend', '.player-btn--2' , handleTouch)
-      $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
-      $component.on('touchend', '.gameEndOptions-option--menu', handleMenu)
+      delegate('touchend', '.player-btn--2' , handleTouch)
+      delegate('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
+      delegate('touchend', '.gameEndOptions-option--menu', handleMenu)
 
-      return $component
+      return $element
     }
 
     const playerController = botMatch.getControllers()[0]
@@ -167,4 +169,4 @@
     })
   }
 
- })(window, document.body, Object.seal, Objectz.compose, Component, BotMatch)
+ })(window, document.body, Object.seal, Objectz.compose, Component, BotMatch, EventDelegator)

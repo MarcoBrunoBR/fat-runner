@@ -12,55 +12,60 @@
   })()
 
   global.OfflineGameScreen = function({match} = {}) {
+
+    const MAX_POINTS = match.MAX_POINTS
+    const playerControllers = match.getControllers()
+
     const state = Object.seal({
       color: getColor()
       ,winner: undefined
-      ,pointCounter: 10
+      ,pointCounter: MAX_POINTS / 2
     })
 
-    const MAX_POINTS = match.MAX_POINTS
+    const render = () => {   
 
-    const render = () => {
-      const $component = new DOMComponent()
-
-      $component.html(`
-        <div class="player player--1">
-          <button class="player-btn player-btn--1">
-            <span>!</span>
-          </button>
-          <div class="player-shadow"></div>
-        </div>
-
-        <div class="gameEndOptions">
-          <div class="gameEndOptions-wrapper gameEndOptions-wrapper--1">
-            <button class="gameEndOptions-option gameEndOptions-option--menu">
-              Menu
+      const $element = document.dom`
+        <div>
+          <div class="player player--1">
+            <button class="player-btn player-btn--1">
+              <span>!</span>
             </button>
-            <button class="gameEndOptions-shadow"></button>
+            <div class="player-shadow"></div>
           </div>
-          <div class="gameEndOptions-wrapper gameEndOptions-wrapper--2">
-            <button class="gameEndOptions-option gameEndOptions-option--playAgain">
-              Play Again
+
+          <div class="gameEndOptions">
+            <div class="gameEndOptions-wrapper gameEndOptions-wrapper--1">
+              <button class="gameEndOptions-option gameEndOptions-option--menu">
+                Menu
+              </button>
+              <button class="gameEndOptions-shadow"></button>
+            </div>
+            <div class="gameEndOptions-wrapper gameEndOptions-wrapper--2">
+              <button class="gameEndOptions-option gameEndOptions-option--playAgain">
+                Play Again
+              </button>
+            </div>
+          </div>
+
+          <div class="pontos">
+            <div class="pontos-barra"></div>
+            <span class="pontos-texto">You Win!</span>
+          </div>
+
+          <div class="player player--2">
+            <button class="player-btn player-btn--2">
+              <span>!</span>
             </button>
+            <div class="player-shadow"></div>
           </div>
         </div>
+      `
 
-        <div class="pontos">
-          <div class="pontos-barra"></div>
-          <span class="pontos-texto">You Win!</span>
-        </div>
+      const {on: delegate} = new EventDelegator($element)
 
-        <div class="player player--2">
-          <button class="player-btn player-btn--2">
-            <span>!</span>
-          </button>
-          <div class="player-shadow"></div>
-        </div>
-      `)
-
-      const $msgVitoria = $component.find('.pontos span')
-      const $barraPontos = $component.find('.pontos div')
-      const $options = $component.find('.gameEndOptions')
+      const $msgVitoria = $element.querySelector('.pontos span')
+      const $barraPontos = $element.querySelector('.pontos div')
+      const $options = $element.querySelector('.gameEndOptions')
 
       requestAnimationFrame(function raf(){
         $page.style.backgroundColor = state.color
@@ -71,29 +76,29 @@
         else {
           $msgVitoria.style.color = state.color
           if (state.winner == 1){
-            $component.addClass('wrapperPlayers--player1Won')
+            $element.classList.add('wrapperPlayers--player1Won')
           }
           if (state.winner == 2) {
-            $component.addClass('wrapperPlayers--player2Won')
+            $element.classList.add('wrapperPlayers--player2Won')
           }
-          $component.on('transitionend', ".pontos-texto", () => {
-            $component.addClass('wrapperPlayers--openedOptions')
+          delegate('transitionend', ".pontos-texto", () => {
+            $element.classList.add('wrapperPlayers--openedOptions')
           })
         }
       })
 
-      $component.on('touchend', ".player-btn--1", handlePlayer1)
-      $component.on('touchend', ".player-btn--2", handlePlayer2)
+      delegate('touchend', ".player-btn--1", handlePlayer1)
+      delegate('touchend', ".player-btn--2", handlePlayer2)
 
-      $component.on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
-      $component.on('touchend', '.gameEndOptions-option--menu', handleMenu)
+      delegate('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
+      delegate('touchend', '.gameEndOptions-option--menu', handleMenu)
 
-      BrowserCompatibility.setIphoneFix()
-
-      return $component
+      return $element
     }
 
-    const playerControllers = match.getControllers()
+    const willMount = () => {
+      BrowserCompatibility.setIphoneFix()
+    }
 
     const didMount = () => {
       playerControllers[0].sayIAmReadyToStart()
@@ -128,8 +133,8 @@
     }
 
     return Objectz.compose(Component, {
-      render,willUnmount
+      render, willMount, didMount, willUnmount
     })
   }
 
- })(window, document.body, Object.seal, Objectz.compose, Component, BrowserCompatibility)
+ })(window, document.body, document.dom, Object.seal, Objectz.compose, Component, BrowserCompatibility, EventDelegator)

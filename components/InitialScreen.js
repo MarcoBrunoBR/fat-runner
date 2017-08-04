@@ -17,37 +17,39 @@
         }
 
         const render = (props) => {
-            const $component = new DOMComponent()
+            const $element = document.dom`
+                <div>
+                    <div class="player player--1 ">
+                        <button class="player-btn player-btn--1">
+                            <span>!</span>
+                        </button>
+                        <div class="player-shadow"></div>
+                    </div>
 
-            $component.html(`
-                <div class="player player--1 ">
-                    <button class="player-btn player-btn--1">
-                        <span>!</span>
-                    </button>
-                    <div class="player-shadow"></div>
+                    <div class="pontos">
+                        <div class="startOnePlayer pontos-barra pontos-barra--left">1 Player</div>
+                        <div class="startTwoPlayers pontos-barra--right">2 players</div>
+                    </div>
+
+                    <nav class="navigation">
+                        <figure class="navigation-item navigation-item--online">
+                            <img class="startOnePlayer" src="img/online.png">
+                        </figure>
+
+                        <figure class="navigation-item navigation-item--offline">
+                            <img class="startTwoPlayers" src="img/offline.png">
+                        </figure>
+                    </nav>
                 </div>
+            `
 
-                <div class="pontos">
-                    <div class="startOnePlayer pontos-barra pontos-barra--left">1 Player</div>
-                    <div class="startTwoPlayers pontos-barra--right">2 players</div>
-                </div>
+            const {on: delegate} = new EventDelegator($element)
 
-                <nav class="navigation">
-                    <figure class="navigation-item navigation-item--online">
-                        <img class="startOnePlayer" src="img/online.png">
-                    </figure>
+            delegate("click", ".player-btn", handleClickLogo)
+            delegate("click", ".startOnePlayer", handleSinglePlayerStart)
+            delegate("click", ".startTwoPlayers", handleTwoPlayersStart)
 
-                    <figure class="navigation-item navigation-item--offline">
-                        <img class="startTwoPlayers" src="img/offline.png">
-                    </figure>
-                </nav>
-            `)
-
-            $component.on("click", ".player-btn", handleClickLogo)
-            $component.on("click", ".startOnePlayer", handleSinglePlayerStart)
-            $component.on("click", ".startTwoPlayers", handleTwoPlayersStart)
-
-            const $pontos =  $component.find('.pontos')
+            const $pontos =  $element.querySelector('.pontos')
             
             requestAnimationFrame(function raf(){
                 $page.style.backgroundColor = state.color
@@ -55,7 +57,7 @@
                 if (!state.startingGame) requestAnimationFrame(raf)
             })
 
-            return $component
+            return $element
         }
 
         const handleClickLogo = function(event){
@@ -78,5 +80,5 @@
         })
     }
 
-})(window, document.body,Objectz.compose, Component, DOMComponent, BotMatch)
+})(window, document.body, document.dom, Objectz.compose, Component, EventDelegator, BotMatch)
 

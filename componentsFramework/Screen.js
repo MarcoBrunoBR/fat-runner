@@ -10,7 +10,7 @@
                 .then(() => component.willMount() || Promise.resolve())
                 .then(() => {
                     gameScreen.innerHTML = ''
-                    gameScreen.appendChild(component.render().getElement())
+                    gameScreen.appendChild(component.render())
                     return component.didMount() || Promise.resolve()
                 })
                 .then(() => {
