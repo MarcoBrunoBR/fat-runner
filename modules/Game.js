@@ -18,4 +18,4 @@
         stateMap[GameState.INIT]()
     }
 
-})(window, window.history, Screen, GameState, InitialScreen, OfflineGameScreen, OnlineGameScreen, SinglePlayerScreen)
+})(window, window.history, Screen, GameState, InitialScreen, OfflineGameScreen, SinglePlayerScreen)

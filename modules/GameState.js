@@ -2,7 +2,6 @@
     
     const states = [
         "INIT"
-        ,"ONLINE_START"
         ,"OFFLINE_2PLAYER"
         ,"SINGLE_PLAYER"
     ]
