@@ -7,13 +7,13 @@
         event.preventDefault()
     }
     global.BrowserCompatibility = {
-        setIphoneFix: () => {
-            document.addEventListener('touchmove', IphonePinchToZoomFix, false)
-            document.addEventListener('touchend', IphoneDblTouchToZoomFix, false)
+        setIphoneFix: ($element = document) => {
+            $element.addEventListener('touchmove', IphonePinchToZoomFix, false)
+            $element.addEventListener('touchend', IphoneDblTouchToZoomFix, false)
         }
-        ,unsetIphoneFix: () => {
-            document.removeEventListener('touchmove', IphonePinchToZoomFix)
-            document.removeEventListener('touchend', IphoneDblTouchToZoomFix)
+        ,unsetIphoneFix: ($element = document) => {
+            $element.removeEventListener('touchmove', IphonePinchToZoomFix)
+            $element.removeEventListener('touchend', IphoneDblTouchToZoomFix)
         }
     }
 })(window)

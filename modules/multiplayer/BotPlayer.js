@@ -3,18 +3,19 @@
     global.BotPlayer = function(){
 
         const player = new Player()
-
         const playerController = player.controller()
 
         const start = () => {
             setInterval(() => {
                 playerController.click()
-            }, 200)
+            }, 175)
         }
 
         return Objectz.compose(player, {
-            onSayIAmReadyToStart: (callback) => callback()
-            ,start: start
+            start: start
+            ,controller: () => Objectz.compose(playerController, {
+                click: () => {}
+            })
         })
     }
 

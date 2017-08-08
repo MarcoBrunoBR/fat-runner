@@ -2,19 +2,24 @@
 
     global.InitialScreen = function(props){
         const state = {
-            color: Colors.getColor(),
-            startingGame: false
+            color: Colors.getColor()
         }
 
-        const render = (props) => {
-            const $element = document.dom`
+        const dummyPlayer = new Player()
+        dummyPlayer.onClick(() => {
+            dummyPlayer.rumbleController()
+            state.color = Colors.getColor()
+        })
+
+        const render = (dom, {on}, onAnimationFrame) => {
+            const $$dummyPlayer = new $$Player({
+                id: 1
+                ,controller: dummyPlayer.controller() 
+            })
+
+            const $element = dom`
                 <div>
-                    <div class="player player--1 ">
-                        <button class="player-btn player-btn--1">
-                            <span>!</span>
-                        </button>
-                        <div class="player-shadow"></div>
-                    </div>
+                    ${$$dummyPlayer}
 
                     <div class="pontos">
                         <div class="startOnePlayer pontos-barra pontos-barra--left">1 Player</div>
@@ -33,42 +38,31 @@
                 </div>
             `
 
-            const {on: delegate} = new EventDelegator($element)
-
-            delegate("click", ".player-btn", handleClickLogo)
-            delegate("click", ".startOnePlayer", handleSinglePlayerStart)
-            delegate("click", ".startTwoPlayers", handleTwoPlayersStart)
-
             const $pontos =  $element.querySelector('.pontos')
             
-            requestAnimationFrame(function raf(){
+            onAnimationFrame(() => {
                 $page.style.backgroundColor = state.color
                 $pontos.style.color = state.color
-                if (!state.startingGame) requestAnimationFrame(raf)
             })
+
+            on("click", ".startOnePlayer", handleSinglePlayerStart)
+            on("click", ".startTwoPlayers", handleTwoPlayersStart)
 
             return $element
         }
 
-        const handleClickLogo = function(event){
-            state.color = Colors.getColor()
-        }
-
         const handleSinglePlayerStart = function(event){
-            Game.state(GameState.SINGLE_PLAYER, {botMatch: new BotMatch()})
+            Game.state(GameState.SINGLE_PLAYER)
         }
 
         const handleTwoPlayersStart = function(event){
-            Game.state(GameState.OFFLINE_2PLAYER, {match: new Match()})
+            Game.state(GameState.OFFLINE_2PLAYER)
         }
 
-        return Objectz.compose(Component, {
-            render: () => render(props),
-            willUnmount: () => {
-                state.startingGame = true
-            }
+        return Objectz.extends(DOMComponent, {
+            render
         })
     }
 
-})(window, document.body, document.dom, Objectz.compose, Component, EventDelegator, BotMatch, Colors)
+})(window, document.body, document.dom, Objectz.extends, DOMComponent, Colors)
 
