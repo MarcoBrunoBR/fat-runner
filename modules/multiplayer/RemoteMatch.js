@@ -1,33 +1,42 @@
 ((global) => {
 
-    global.RemoteMatch = function(oponent){
-
-        const state = Object.seal({
-            pointCounter: 10
+    global.RemoteMatch = function(matchConnection){
+        const localPlayer = new Player()
+        localPlayer.onClick(() => {
+            matchConnection.emit("click")
         })
 
-        const eventEmitter = new EventEmitter2({wildcard: true})
-
-        oponent.on("sayIAmReadyToStart", () => {
-            eventEmitter.emit("otherPlayerIsReady")
+        const remotePlayer = new Player()
+        const remoteplayerController = remotePlayer.controller()
+        matchConnection.on("click", () => {
+            remoteplayerController.click()
         })
 
-        oponent.on("click", () => {
-            state.pointCounter --
-            eventEmitter.emit("updatePoints", state.pointCounter)
+        const withDummyController = player => Objectz.compose(player, {
+            controller: () => Objectz.compose(player.controller(), {
+                click: () => {console.log("Roubão")}
+            })  
         })
 
-        const handleClick = () => {
-            oponent.emit("click")
-            state.pointCounter++
-            eventEmitter.emit("updatePoints", state.pointCounter)
-        }
 
-        return {
-            click: () => handleClick()
-            ,sayIAmReadyToStart: () => oponent.emit("sayIAmReadyToStart")
-            ,onPointUpdate: (callback) => eventEmitter.on("updatePoints", () => callback(state.pointCounter))
-        }
+        const match = new Match({
+            MAX_POINTS: 20
+            , initCountdownFrom: 5
+            , player1: withDummyController(remotePlayer)
+            , player2: localPlayer
+        })
+
+        return Objectz.compose(match, {
+            disconnect: () => {
+                matchConnection.emit("disconnect")
+            }
+            ,onUpdatePoints: (callback) => {
+                match.onUpdatePoints(callback)
+                matchConnection.on('abruptEnd', () => {
+                    callback(20, 2)
+                })
+            }
+        })
     }
 
-})(window, EventEmitter2)
+})(window, Match, Player, Objectz.compose)

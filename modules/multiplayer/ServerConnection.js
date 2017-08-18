@@ -8,11 +8,10 @@
 
     const findPlayer = (socket) => {
         return new Promise((resolve, reject) => {
-            socket.on("playerFound", (matchID) => {
-                console.log(matchID)
+            socket.on("playerFound", (matchID, playerID) => {
                 const emitToMatch = (msgName) => socket.emit(matchID + "/" + msgName)
-                const receiveFromMatch = (msgName, callback) => socket.on(matchID + "/" + msgName)
-                resolve(new RemoteMatch({emit: emitToMatch, on: receiveFromMatch}))
+                const receiveFromMatch = (msgName, callback) => socket.on(matchID + "/" + msgName, callback)
+                resolve({emit: emitToMatch, on: receiveFromMatch})
             })
             socket.on("playerNotFound", () => {
                 reject("Can't find a player for you right now :( Try again later =)")

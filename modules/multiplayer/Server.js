@@ -8,7 +8,6 @@
                 let connected = false
                 socket.on('ok', function () {
                     connected = true
-                    console.log("Connected")
                     resolve(new ServerConnection(socket))
                 });
                 setTimeout(() => {

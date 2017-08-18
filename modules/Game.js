@@ -4,15 +4,16 @@
 
     const stateMap = {
         [GameState.INIT] : (props) => root.mount(new InitialScreen(props))
-        ,[GameState.ONLINE_START] : (props) => root.mount(new OnlineGameScreen(props))
         ,[GameState.SINGLE_PLAYER] : (props) => root.mount(new SinglePlayerScreen(props))
         ,[GameState.OFFLINE_2PLAYER] : (props) => root.mount(new TwoPlayerOfflineScreen(props))
+        ,[GameState.SETUP_ONLINE_2PLAYER] : (props) => root.mount(new LoadingRemoteMatchScreen(props))
+        ,[GameState.ONLINE_2PLAYER] : (props) => root.mount(new TwoPlayerOnlineScreen(props))
         ,"PREVIOUS": (props) => stateMap[history.state](props)
 
     }
 
     let undoPreviousState = () => Promise.resolve()
-    global.Game = {
+    const Game = {
         state: (gameState, props) => {
             return undoPreviousState()
                 .then(() => stateMap[gameState](props))
@@ -23,8 +24,10 @@
         }
     }
 
+    global.Game = Game
+
     window.onpopstate = function(event) {
-        stateMap[GameState.INIT]()
+        Game.state(GameState.INIT)
     }
 
-})(window, window.history, GameState, DOMRootComponent, InitialScreen, TwoPlayerOfflineScreen, SinglePlayerScreen)
+})(window, window.history, GameState, DOMRootComponent, InitialScreen, TwoPlayerOfflineScreen, SinglePlayerScreen, LoadingRemoteMatchScreen, TwoPlayerOnlineScreen)

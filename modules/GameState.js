@@ -2,8 +2,10 @@
     
     const states = [
         "INIT"
-        ,"OFFLINE_2PLAYER"
         ,"SINGLE_PLAYER"
+        ,"OFFLINE_2PLAYER"
+        ,"SETUP_ONLINE_2PLAYER"
+        ,"ONLINE_2PLAYER"
     ]
 
     global.GameState = states.reduce((obj, state) => {
