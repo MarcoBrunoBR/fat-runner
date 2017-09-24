@@ -1,10 +1,10 @@
 ((global) => {
-    global.Server = function(serverURL){
+    global.Server = function(ioInterface){
         let socket
 
-        const connect = (serverURL) => {
+        const connect = () => {
             return new Promise((resolve, reject) => {
-                socket = io.connect(serverURL);
+                socket = ioInterface.connect();
                 let connected = false
                 socket.on('ok', function () {
                     connected = true
@@ -13,7 +13,7 @@
                 setTimeout(() => {
                     if(!connected){
                         socket.close()
-                        reject("Can't connect to the server in " + serverURL)
+                        reject("Can't connect to the servers ")
                     }
                 }, 60/2 * 1000)
             })
@@ -24,10 +24,10 @@
         }
 
         return {
-            connect: () => connect(serverURL)
+            connect: () => connect()
             ,disconnect: () => disconnect()
         }
     }
 
     
-})(window, ServerConnection, io)
+})(window, SocketIOIOInterface, ServerConnection)

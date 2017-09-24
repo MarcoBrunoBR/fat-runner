@@ -6,11 +6,11 @@
             ,mounted: false
         })
 
-        const render = (dom, {on}, onUpdateRender) => {
+        const render = (dom, {on}, onAnimationFrame) => {
             const $element = dom`
                 <div class="player player--${playerID}">
                     <button class="player-btn player-btn--${playerID}">
-                    <span>!</span>
+                        <span>!</span>
                     </button>
                     <div class="player-shadow"></div>
                 </div>
@@ -18,7 +18,7 @@
 
             const $playerBtn = $element.querySelector('.player-btn')
 
-            onUpdateRender(function(){
+            onAnimationFrame(function(){
                 $playerBtn.classList.toggle('player-btn--active', state.active)
             })
 
@@ -36,8 +36,8 @@
             setTimeout(() => state.active = false, 50)
         })
 
-        return Objectz.extends(DOMComponent, {
+        return {
             render, didMount
-        })
+        }
     }
 })(window, Objectz.extends, DOMComponent, document.dom)

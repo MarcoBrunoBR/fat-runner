@@ -18,7 +18,6 @@
             })  
         })
 
-
         const match = new Match({
             MAX_POINTS: 20
             , initCountdownFrom: 5

@@ -4,7 +4,7 @@
         return DOMComponent.prototype
     }
 
-    DOMComponent.prototype = Object.seal({
+    DOMComponent.prototype = Object.freeze({
         render: function(){
             throw new Error("Component didn't implement render function")
         }
@@ -22,7 +22,7 @@
     const DOMComponentTagFunction = function(managedLifecycles){  
         return function(strings, ...values){
             const parsedAsDOMValues = values.map(value => {                
-                if(value instanceof DOMComponent){
+                if(typeof value.render === "function"){
                     const $template = document.createElement("template")
                     managedLifecycles.push(new DOMComponentLifeCycle(value, $template))
                     return $template
@@ -34,7 +34,6 @@
         }
     }
 
-    //TODO Usar generator function aqui pra executar uma vez pro dummy e outra vez pro de vdd
     const DummyEventDelegator = function (eventMap){
         return {
             on: (eventName, ...otherArgs) => {
@@ -132,7 +131,7 @@
 
         return {                
             start: () => (
-                (component.willMount() || Promise.resolve())
+                Promise.resolve(component.willMount && component.willMount())
                 .then(() => {
                     $domNode.innerHTML = ''
                     return new DOMComponentBabysitter(lifecycleObserver, function(domComponentTagFunction, eventDelegator, onUpdateRender){
@@ -152,36 +151,37 @@
                     managedLifecycles = babyLifecycles
                     return Promise.all(managedLifecycles.map(lifecycle => lifecycle.start()))
                 })
-                .then(()=> (component.didMount() || Promise.resolve()))
+                .then(() => Promise.resolve(component.didMount && component.didMount()))
                 .then(() => lifecycleObserver.emit("mount"))
-                .catch(error => console.error("Error mounting component", error))
+                .catch(error => console.error("DOMComponentLifeCycle: Error mounting component", error))
             )
             ,end : () => (
                 Promise.all(
                     managedLifecycles.map(lifecycle => lifecycle.end())
                 )
-                .then(() => component.willUnmount())
+                .then(() => Promise.resolve(component.willUnmount && component.willUnmount()))
                 .then(() => lifecycleObserver.emit("unmount"))
-                .catch(error => console.error("Error unmounting component", error))
+                .catch(error => console.error("DOMComponentLifeCycle: Error unmounting component", error))
             )
         }
     }
-
-
-    const DOMRootComponent = function($domElement){
+    
+    const DOMComponentPlumber = function($domElement) {
+        let unmountPreviousComponent = () => Promise.resolve()
         return {
-            mount: (component) => {
-                const lifecycles = new DOMComponentLifeCycle(component, $domElement)
-                return lifecycles
-                    .start()
-                    .then(() => {
-                        return () => lifecycles.end()
-                    })
-            }
+            mount: component => unmountPreviousComponent()
+                .then(() => {
+                    const componentLifecycle = new DOMComponentLifeCycle(component, $domElement)
+                    unmountPreviousComponent = componentLifecycle.end
+                    const lifeCycleStartPromise = componentLifecycle.start()                
+                    return lifeCycleStartPromise
+                })
+                .catch(error => console.error("DOMComponentPlumber: Error gluing Component to DOM", error))
         }
     }
+        
 
     global.DOMComponent = DOMComponent
-    global.DOMRootComponent = DOMRootComponent
+    global.DOMComponentPlumber = DOMComponentPlumber
 
 })(window, Object.seal, document.dom, EventDelegator, EventEmitter2)

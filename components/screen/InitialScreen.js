@@ -56,12 +56,10 @@
         }
 
         const handleTwoPlayersStart = function(event){
-            Game.state(GameState.OFFLINE_2PLAYER)
+            Game.state(GameState.SETUP_ONLINE_2PLAYER)
         }
 
-        return Objectz.extends(DOMComponent, {
-            render
-        })
+        return {render}
     }
 
 })(window, document.body, document.dom, Objectz.extends, DOMComponent, Colors)

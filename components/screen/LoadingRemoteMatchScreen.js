@@ -1,8 +1,8 @@
-((global) => {
+;((global, Server) => {
 
     global.LoadingRemoteMatchScreen = function(){
 
-        const server = new Server("http://192.168.86.101:3000")
+        const server = new Server()
 
         const state = Object.seal({
             connectionVisualFeedback: "Connecting..."
@@ -27,6 +27,7 @@
                     $loadingText.textContent = state.connectionVisualFeedback
                 } else {
                     $loadingText.textContent = state.connectionError
+                    stop()
                 }
             })
 
@@ -61,9 +62,10 @@
         })()
 
         const serverConnectionPromise = server.connect()
-        connectionVisualFeedback.start("Connecting to servers")
 
-        const remoteMatchConnectionPipeline = () => {            
+        const remoteMatchConnectionPipeline = () => {    
+            connectionVisualFeedback.start("Connecting to servers")
+            
             serverConnectionPromise
                 .then(serverConnection => {
                     connectionVisualFeedback.end()
@@ -89,8 +91,8 @@
 
         remoteMatchConnectionPipeline()
                 
-        return Objectz.extends(DOMComponent, {
+        return {
             render, willUnmount
-        })
+        }
     }
-})(window, Object.seal, Server, DOMComponent, RemoteMatch)
+})(window, SonicServer, Object.seal, DOMComponent, RemoteMatch)
