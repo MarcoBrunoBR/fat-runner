@@ -19,5 +19,8 @@
   "homepage": "https://github.com/MarcoBrunoBR/fat-runner#readme",
   "devDependencies": {
     "http-server": "^0.10.0"
+  },
+  "dependencies": {
+    "libfec": "^1.1.0"
   }
 }

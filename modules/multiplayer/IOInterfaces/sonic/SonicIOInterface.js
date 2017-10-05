@@ -1,11 +1,7 @@
 ;((global) => {
-    
-        global.SonicIOInterface = function(){
-            let socket
-            const connect = () => {
-                socket = new SonicSocket()
-                return socket
-            }
-            return {connect}
+    global.SonicIOInterface = function(){
+        return {
+            createSocket: () => new SonicSocket()
         }
-    })(window, SonicSocket)
+    }
+})(window, SonicSocket)

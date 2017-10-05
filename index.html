@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/gameScreen.css">
     <link rel="stylesheet" href="css/pontos.css">
     <link rel="stylesheet" href="css/player.css">
     <link rel="stylesheet" href="css/navegation.css">
@@ -13,7 +14,7 @@
     <link rel="stylesheet" href="css/initCounter.css">
 </head>
 <body>
-    <main id="gameScreen">
+    <main id="gameScreen" class="gameScreen">
 
     </main>
 
@@ -27,6 +28,7 @@
     <script src="vendor/eventemitter2.js"></script>
     <script src="vendor/socket.io.js"></script>
     <script src="vendor/dom-template-strings.js"></script>
+    <script src="vendor/quiet/quiet.js"></script>
 
     <script src="modules/utils/Objectz.js"></script>
     <script src="modules/multiplayer/Player.js"></script>
@@ -58,5 +60,7 @@
 
     <script src="modules/GameState.js"></script>
     <script src="modules/Game.js"></script>
+
+    <script async src="/vendor/quiet/quiet-emscripten.js"></script>
 </body>
 </html>
