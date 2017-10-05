@@ -84,7 +84,7 @@
                 .catch(error => {
                     connectionVisualFeedback.end()
                     state.connectionError = error
-                    console.error("LoadingRemoteMatchScreen", error)
+                    console.error("LoadingRemoteMatchScreen: ", error)
                     server.disconnect()
                 })
         }
