@@ -38,6 +38,7 @@
             if(!state.startingMatch){
                 server.disconnect()
             }
+            connectionVisualFeedback.end()
         }
 
         //TODO feedback with time to end visualization
@@ -57,6 +58,7 @@
                 }
                 ,end: () => {
                     loadInterval && clearInterval(loadInterval)
+                    loadInterval = undefined
                 }
             }
         })()
