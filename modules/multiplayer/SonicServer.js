@@ -1,4 +1,6 @@
 ;((global) => {
     const sonicIOInterface = new SonicIOInterface()
-    global.SonicServer = Server.bind(this, sonicIOInterface)
+    global.SonicServer = function(){
+        return new Server(sonicIOInterface)
+    }
 })(window, SonicIOInterface, Server)
