@@ -727,39 +727,36 @@ var Quiet = (function() {
      */
     function receiver(opts) {
         var profile = opts.profile;
-        var c_profiles, c_profile;
-        if (typeof profile === 'object') {
-            c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
-            c_profile = Module.intArrayFromString("profile");
-        } else {
-            c_profiles = Module.intArrayFromString(profiles);
-            c_profile = Module.intArrayFromString(profile);
-        }
-        var opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
-
-        // quiet creates audioCtx when it starts but it does not create an audio input
-        // getting microphone access requires a permission dialog so only ask for it if we need it
-        if (gUM === undefined) {
-            gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
-        }
-
-        if (gUM === undefined) {
-            // we couldn't find a suitable getUserMedia, so fail fast
-            if (opts.onCreateFail !== undefined) {
-                opts.onCreateFail("getUserMedia undefined (mic not supported by browser)");
+        var c_profiles, c_profile, opt;
+        return new Promise((resolve, reject) => {            
+            if (typeof profile === 'object') {
+                c_profiles = Module.intArrayFromString(JSON.stringify({"profile": profile}));
+                c_profile = Module.intArrayFromString("profile");
+            } else {
+                c_profiles = Module.intArrayFromString(profiles);
+                c_profile = Module.intArrayFromString(profile);
             }
-            return;
-        }
-
-        var createAudioInputPromise
-        if (audioInput === undefined) {
-            createAudioInputPromise = createAudioInput()
-        } else {
-            throw new Error("Can't create new receiver while there is an active receiver")
-        }
-
-        return createAudioInputPromise.then(() =>{
-
+            
+            opt = Module.ccall('quiet_decoder_profile_str', 'pointer', ['array', 'array'], [c_profiles, c_profile]);
+    
+            // quiet creates audioCtx when it starts but it does not create an audio input
+            // getting microphone access requires a permission dialog so only ask for it if we need it
+            if (gUM === undefined) {
+                gUM = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia);
+            }
+    
+            if (gUM === undefined) {
+                reject(new Error("getUserMedia undefined (mic not supported by browser"));
+                return
+            }
+    
+            if (audioInput === undefined) {
+                resolve(createAudioInput())
+            } else {
+                reject(new Error("Can't create new receiver while there is an active receiver"))
+            }
+        })
+        .then(() => {
             // TODO investigate if this still needs to be placed on window.
             // seems this was done to keep it from being collected
             var scriptProcessor = audioCtx.createScriptProcessor(16384, 2, 1);
@@ -906,7 +903,7 @@ var Quiet = (function() {
                 destroy: destroy,
                 getAverageDecodeTime: getAverageDecodeTime
             }
-        });
+        })
     };
 
     /**

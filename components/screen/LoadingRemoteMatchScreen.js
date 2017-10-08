@@ -4,6 +4,8 @@
 
         const server = new Server()
 
+        const serverConnectionPromise = server.connect()
+
         const state = Object.seal({
             connectionVisualFeedback: "Connecting..."
             ,connectionError: undefined
@@ -22,7 +24,7 @@
 
             const $loadingText = $element.querySelector('.loadingRemoteMatch-text')
 
-            onAnimationFrame((stop) => {
+            onAnimationFrame(stop => {
                 if(!state.connectionError){
                     $loadingText.textContent = state.connectionVisualFeedback
                 } else {
@@ -36,7 +38,7 @@
 
         const willUnmount = () => {
             if(!state.startingMatch){
-                server.disconnect()
+                serverConnectionPromise.then(serverConnection => serverConnection.close())
             }
             connectionVisualFeedback.end()
         }
@@ -56,14 +58,13 @@
                         }`
                     }, 500)
                 }
-                ,end: () => {
+                ,end: reason => {
                     loadInterval && clearInterval(loadInterval)
                     loadInterval = undefined
+                    state.connectionError = reason || undefined
                 }
             }
         })()
-
-        const serverConnectionPromise = server.connect()
 
         const remoteMatchConnectionPipeline = () => {    
             connectionVisualFeedback.start("Connecting to servers")
@@ -84,10 +85,8 @@
                     Game.state(GameState.ONLINE_2PLAYER, {remoteMatch})
                 })
                 .catch(error => {
-                    connectionVisualFeedback.end()
-                    state.connectionError = error
-                    console.error("LoadingRemoteMatchScreen: ", error)
-                    server.disconnect()
+                    connectionVisualFeedback.end(error)
+                    serverConnectionPromise.then(serverConnection => serverConnection.close())
                 })
         }
 

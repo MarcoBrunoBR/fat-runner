@@ -2,12 +2,9 @@
 
     global.SocketIOIOInterface = function(serverURL){
         return {
-            createSocket: () => new Promise((resolve, reject) => {
-                const socket = io(serverURL, {
-                    autoConnect: false
-                })
-                resolve(socket)
-            })        
+            createSocket: () => Promise.resolve(
+                io(serverURL, {autoConnect: false})
+            )
         }
     }
 })(window, io)

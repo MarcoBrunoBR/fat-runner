@@ -10,36 +10,30 @@
         })
     })
 
-    const SonicProtocol = {}
-    SonicProtocol.parse = rawData => ({messageName: rawData})
-    SonicProtocol.stringify = (eventName, value) => eventName
+    const SonicDataParser = {}
+    SonicDataParser.parse = rawData => ({messageName: rawData})
+    SonicDataParser.stringify = (eventName, value) => eventName
 
     function createFromNetworkEmitter (quietProfileName){
 
         const fromNetworkEmitter = new EventEmitter2()
 
-        function onReceiverCreateFail(reason) {
-            throw new Error("SonicIOInterface: failed to create receiver: " + reason);
-        }
-
         function onReceive(payload) {
             const rawData = Quiet.ab2str(payload)
-            const data = SonicProtocol.parse(rawData)
+            const data = SonicDataParser.parse(rawData)
             fromNetworkEmitter.emit(data.messageName)
             console.log("Received: ", data.messageName)
         }
 
         function onReceiveFail(num_fails) {
-            fromNetworkEmitter.emit("error")
+            fromNetworkEmitter.emit("error", num_fails)
         }
 
         return Quiet.receiver({
             profile: quietProfileName
-            ,onCreateFail: onReceiverCreateFail
             ,onReceive: onReceive
             ,onReceiveFail: onReceiveFail
-        })
-        .then(receiver => {
+        }).then(receiver => {
             return Object.assign(fromNetworkEmitter, {
                 destroy: () => receiver.destroy()
             })
@@ -61,7 +55,7 @@
         })
 
         toNetworkEmitter.onAny((eventName, value) => {
-            const rawData = SonicProtocol.stringify(eventName, value)
+            const rawData = SonicDataParser.stringify(eventName, value)
             lastData = rawData
             console.log("Transmiting: ", rawData)
             transmitter.transmit(Quiet.str2ab(
@@ -86,23 +80,37 @@
                 const toNetworkEmitter = emitters.toNetworkEmitter
 
                 const connect = () => new Promise((resolve, reject) => {
+
+                    let timeoutTimer
+
                     const hardwareCheckupID = Math.ceil(Math.random() * 1000)
                     
-                    fromNetworkEmitter.on(hardwareCheckupID, function(){
-                        resolve(emitters)
+                    fromNetworkEmitter.once(hardwareCheckupID, function(){
+                        if(timeoutTimer){
+                            global.clearTimeout(timeoutTimer)
+                            timeoutTimer = undefined
+                        }
+                        fromNetworkEmitter.removeAllListeners("error")
+                        fromNetworkEmitter.emit("connect")
                     })
-                    fromNetworkEmitter.on("error", function(){
-                        reject("We didn't quite get that. It looks like you tried to transmit something. You may need to move the transmitter closer to the receiver and set the volume to 50%.")
+
+                    fromNetworkEmitter.once("error", function(error){
+                        if(timeoutTimer){
+                            global.clearTimeout(timeoutTimer)
+                            timeoutTimer = undefined
+                        }
+                        fromNetworkEmitter.removeAllListeners(hardwareCheckupID)
+                        fromNetworkEmitter.emit("connect_error", new Error(error))
                     })
 
                     toNetworkEmitter.emit(hardwareCheckupID)
 
-                    setTimeout(() => {
-                        timedout = true
-                        reject("SonicSocket: Timeout. Couldn't connect.")
-                    }, (60/2) * 1000)
+                    timeoutTimer = setTimeout(() => {
+                        fromNetworkEmitter.emit("connect_timeout")
+                        fromNetworkEmitter.emit("connect_error", new Error("Socket connection timedout"))
+                    }, 20000)
                     
-                }).then(() => fromNetworkEmitter.emit("connect"))
+                })
 
                 return {
                     on: (eventName, cb) => fromNetworkEmitter.on(eventName, cb)
