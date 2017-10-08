@@ -22,11 +22,10 @@
             const rawData = Quiet.ab2str(payload)
             const data = SonicDataParser.parse(rawData)
             fromNetworkEmitter.emit(data.messageName)
-            console.log("Received: ", data.messageName)
         }
 
         function onReceiveFail(num_fails) {
-            fromNetworkEmitter.emit("error", num_fails)
+            fromNetworkEmitter.emit("receive_error", num_fails)
         }
 
         return Quiet.receiver({
@@ -43,10 +42,8 @@
     function createToNetworkEmitter (quietProfileName){
         const toNetworkEmitter = new EventEmitter2()
 
-        let lastData
-
         function onTransmitFinish() {
-            console.log("Finished trasmitting", lastData)
+            toNetworkEmitter.emit("transmit_finish")
         }
 
         const transmitter = Quiet.transmitter({
@@ -55,12 +52,12 @@
         })
 
         toNetworkEmitter.onAny((eventName, value) => {
-            const rawData = SonicDataParser.stringify(eventName, value)
-            lastData = rawData
-            console.log("Transmiting: ", rawData)
-            transmitter.transmit(Quiet.str2ab(
-                rawData
-            ))
+            if(eventName !== "transmit_finish"){
+                const rawData = SonicDataParser.stringify(eventName, value)
+                transmitter.transmit(Quiet.str2ab(
+                    rawData
+                ))
+            }
         })
 
         return Object.assign(toNetworkEmitter, {
@@ -79,43 +76,16 @@
                 const fromNetworkEmitter = emitters.fromNetworkEmitter
                 const toNetworkEmitter = emitters.toNetworkEmitter
 
-                const connect = () => new Promise((resolve, reject) => {
-
-                    let timeoutTimer
-
-                    const hardwareCheckupID = Math.ceil(Math.random() * 1000)
-                    
-                    fromNetworkEmitter.once(hardwareCheckupID, function(){
-                        if(timeoutTimer){
-                            global.clearTimeout(timeoutTimer)
-                            timeoutTimer = undefined
-                        }
-                        fromNetworkEmitter.removeAllListeners("error")
-                        fromNetworkEmitter.emit("connect")
-                    })
-
-                    fromNetworkEmitter.once("error", function(error){
-                        if(timeoutTimer){
-                            global.clearTimeout(timeoutTimer)
-                            timeoutTimer = undefined
-                        }
-                        fromNetworkEmitter.removeAllListeners(hardwareCheckupID)
-                        fromNetworkEmitter.emit("connect_error", new Error(error))
-                    })
-
-                    toNetworkEmitter.emit(hardwareCheckupID)
-
-                    timeoutTimer = setTimeout(() => {
-                        fromNetworkEmitter.emit("connect_timeout")
-                        fromNetworkEmitter.emit("connect_error", new Error("Socket connection timedout"))
-                    }, 20000)
-                    
+                toNetworkEmitter.on("transmit_finish", function(){
+                    fromNetworkEmitter.emit("transmit_finish")
                 })
 
                 return {
                     on: (eventName, cb) => fromNetworkEmitter.on(eventName, cb)
-                    ,emit: eventName => toNetworkEmitter.emit(eventName)
-                    ,connect: () => connect()
+                    ,once: (eventName, cb) => fromNetworkEmitter.once(eventName, cb)
+                    ,onAny: (cb) => fromNetworkEmitter.onAny(cb)
+                    ,emit: (eventName, data) => toNetworkEmitter.emit(eventName, data)
+                    ,removeAllListeners: eventName => fromNetworkEmitter.removeAllListeners(eventName)
                     ,close: () => {
                         fromNetworkEmitter.destroy()
                         toNetworkEmitter.destroy()

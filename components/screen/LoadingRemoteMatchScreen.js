@@ -38,9 +38,13 @@
 
         const willUnmount = () => {
             if(!state.startingMatch){
-                serverConnectionPromise.then(serverConnection => serverConnection.close())
+                connectionVisualFeedback.end()
+                connectionVisualFeedback.start("Closing connection")
+                return serverConnectionPromise.then(connection =>{
+                    connection.close()
+                    connectionVisualFeedback.end()
+                })
             }
-            connectionVisualFeedback.end()
         }
 
         //TODO feedback with time to end visualization

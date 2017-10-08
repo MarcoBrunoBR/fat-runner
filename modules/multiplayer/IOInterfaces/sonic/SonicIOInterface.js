@@ -1,7 +1,9 @@
-;((global) => {
+;((global, withLogging, withConnection) => {
     global.SonicIOInterface = function(){
         return {
-            createSocket: () => new SonicSocket()
+            createSocket: () => withConnection(withLogging(
+                new SonicSocket()
+            ))
         }
     }
-})(window, SonicSocket)
+})(window, IOSocketWithLogging, IOSocketWithConnection, SonicSocket)
