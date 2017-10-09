@@ -1,5 +1,5 @@
 ;((global) => {
-    global.IOSocketWithConnection = socketPromise => socketPromise.then(socket => {
+    global.IOSocketWithOpenProcedure = socketPromise => socketPromise.then(socket => {
 
         const connectionEventsEmitter = new EventEmitter2()
         const connectionEvents = [
@@ -8,7 +8,7 @@
             ,"connect_timeout"
         ]
 
-        const connect = () => new Promise((resolve, reject) => {
+        const open = () => new Promise((resolve, reject) => {
 
             let timeoutTimer
 
@@ -55,7 +55,7 @@
         }
 
         return Object.assign({}, socket, {
-            connect: () => connect()
+            open: () => open()
             ,on: (eventName, callback) => listenWithHandler("on", callback, eventName)
             ,once: (eventName, callback) => listenWithHandler("once", callback, eventName)
             ,onAny: (callback) => listenWithHandler("onAny", callback)

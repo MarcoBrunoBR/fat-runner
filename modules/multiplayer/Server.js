@@ -15,13 +15,16 @@
                         reject(error)
                     })
                     
-                    socket.connect()
+                    socket.open()
                 })
             })
         }
 
         return {
             connect: () => connect()
+            ,disconnect: () => createSocketPromise.then(socket => {
+                socket.close()
+            })
         }
     }
 

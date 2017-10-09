@@ -4,8 +4,6 @@
 
         const server = new Server()
 
-        const serverConnectionPromise = server.connect()
-
         const state = Object.seal({
             connectionVisualFeedback: "Connecting..."
             ,connectionError: undefined
@@ -40,10 +38,7 @@
             if(!state.startingMatch){
                 connectionVisualFeedback.end()
                 connectionVisualFeedback.start("Closing connection")
-                return serverConnectionPromise.then(connection =>{
-                    connection.close()
-                    connectionVisualFeedback.end()
-                })
+                return server.disconnect().then(() => connectionVisualFeedback.end())
             }
         }
 
@@ -69,10 +64,11 @@
                 }
             }
         })()
+        
+        const serverConnectionPromise = server.connect()
 
         const remoteMatchConnectionPipeline = () => {    
             connectionVisualFeedback.start("Connecting to servers")
-            
             serverConnectionPromise
                 .then(serverConnection => {
                     connectionVisualFeedback.end()
@@ -90,7 +86,7 @@
                 })
                 .catch(error => {
                     connectionVisualFeedback.end(error)
-                    serverConnectionPromise.then(serverConnection => serverConnection.close())
+                    server.disconnect()
                 })
         }
 
