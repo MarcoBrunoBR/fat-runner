@@ -10,31 +10,37 @@
 
         const open = () => new Promise((resolve, reject) => {
 
-            let timeoutTimer
+            let timeoutTimer, retryTimer
+            let stopTimers = false
+
+            const clearTimers = () => {
+                stopTimers = true
+                if(timeoutTimer){
+                    global.clearTimeout(timeoutTimer)
+                    timeoutTimer = undefined
+                }
+                if(retryTimer){
+                    global.clearTimeout(retryTimer)
+                    retryTimer = undefined
+                }
+            }
 
             const hardwareCheckupID = Math.ceil(Math.random() * 1000)
             
             socket.once(hardwareCheckupID, function(){
-                if(timeoutTimer){
-                    global.clearTimeout(timeoutTimer)
-                    timeoutTimer = undefined
-                }
-                socket.removeAllListeners("receive_error")
+                clearTimers()
                 connectionEventsEmitter.emit("connect")
             })
 
-            socket.once("receive_error", function(error){
-                if(timeoutTimer){
-                    global.clearTimeout(timeoutTimer)
-                    timeoutTimer = undefined
+            retryTimer = setTimeout(function retry(){
+                socket.emit(hardwareCheckupID)
+                if(!stopTimers){
+                    retryTimer = setTimeout(retry, 20000 / 20)
                 }
-                socket.removeAllListeners(hardwareCheckupID)
-                connectionEventsEmitter.emit("connect_error", new Error(error))
-            })
-
-            socket.emit(hardwareCheckupID)
+            }, 20000 / 20)
 
             timeoutTimer = setTimeout(() => {
+                clearTimers()
                 connectionEventsEmitter.emit("connect_timeout")
                 connectionEventsEmitter.emit("connect_error", new Error("Socket connection timedout"))
             }, 20000)
