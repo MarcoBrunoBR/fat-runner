@@ -17,13 +17,15 @@
 
     const findPlayer = (socket) => {
         return new Promise((resolve, reject) => {
-            socket.on("playerFound", (matchID, playerID) => {
+            socket.on("playerFound", (matchID) => {
                 if(findPlayerTimeout) {
                     global.clearTimeout(findPlayerTimeout)
                     findPlayerTimeout = undefined
                 }
-                const emitToMatch = (msgName) => socket.emit(matchID + "/" + msgName)
-                const receiveFromMatch = (msgName, callback) => socket.on(matchID + "/" + msgName, callback)
+
+                const emitToMatch = (msgName) => socket.emit(msgName)
+                const receiveFromMatch = (msgName, callback) => socket.on(msgName, callback)
+
                 resolve({emit: emitToMatch, on: receiveFromMatch})
             })
             socket.on("playerNotFound", () => {

@@ -10,18 +10,14 @@
         })
     })
 
-    const SonicDataParser = {}
-    SonicDataParser.parse = rawData => ({messageName: rawData})
-    SonicDataParser.stringify = (eventName, value) => eventName
-
     function createFromNetworkEmitter (quietProfileName){
 
         const fromNetworkEmitter = new EventEmitter2()
 
         function onReceive(payload) {
             const rawData = Quiet.ab2str(payload)
-            const data = SonicDataParser.parse(rawData)
-            fromNetworkEmitter.emit(data.messageName)
+            const message = SonicDataParser.parse(rawData)
+            fromNetworkEmitter.emit(message.messageName, message.data)
         }
 
         function onReceiveFail(num_fails) {
@@ -98,4 +94,4 @@
                 throw new Error("SonicSocket: " + error)
             })
     }
-})(window, EventEmitter2)
+})(window, EventEmitter2, SonicDataParser)

@@ -1,9 +1,13 @@
-;((global, withLogging, withConnection) => {
+;((global, withTransmissionLogging, withReceiveLogging,withConnectionVerification, withSelfMessagingPrevention) => {
     global.SonicIOInterface = function(){
         return {
-            createSocket: () => withConnection(withLogging(
-                new SonicSocket()
-            ))
+            createSocket: () => 
+                withReceiveLogging(
+                withSelfMessagingPrevention(
+                withConnectionVerification(
+                withTransmissionLogging(
+                    new SonicSocket()
+                ))))
         }
     }
-})(window, IOSocketWithLogging, IOSocketWithConnection, SonicSocket)
+})(window, IOSocketWithTransmissionLogging, IOSocketWithReceiveLogging, IOSocketWithConnection, IOSocketWithPlayerConnection, SonicSocket)

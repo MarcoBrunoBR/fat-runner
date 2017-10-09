@@ -41,14 +41,15 @@
             
         })
 
-        const listenWithHandler = (handler, cb, eventName) => {
-            const emitter = connectionEvents.indexOf(eventName) > -1 
-                ? connectionEventsEmitter
-                : socket
-
+        const listenWithHandler = (handler, cb, eventName) => {          
             if(handler === "onAny") {
-                emitter[handler](cb)
+                socket.onAny(cb)
+                connectionEventsEmitter.onAny(cb)
             } else {
+                const emitter = connectionEvents.indexOf(eventName) > -1 
+                    ? connectionEventsEmitter
+                    : socket
+
                 emitter[handler](eventName, cb)
             }
         }
@@ -57,8 +58,8 @@
             connect: () => connect()
             ,on: (eventName, callback) => listenWithHandler("on", callback, eventName)
             ,once: (eventName, callback) => listenWithHandler("once", callback, eventName)
-            ,onAny: (eventName, callback) => listenWithHandler("onAny", callback)
+            ,onAny: (callback) => listenWithHandler("onAny", callback)
         })
         
     })
-})(window)
+})(window, EventEmitter2)
