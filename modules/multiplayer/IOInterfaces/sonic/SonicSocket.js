@@ -28,15 +28,20 @@
             fromNetworkEmitter.emit("receive_checksum_error", num_fails)
         }
 
-        return Quiet.receiver({
-            profile: quietProfileName
-            ,onReceive: onReceive
-            ,onReceiveFail: onReceiveFail
-        }).then(receiver => {
-            return Object.assign(fromNetworkEmitter, {
-                destroy: () => receiver.destroy()
-            })
-        })
+        return quietSetupPromise
+            .then(() => 
+                Quiet.receiver({
+                    profile: quietProfileName
+                    ,onReceive: onReceive
+                    ,onReceiveFail: onReceiveFail
+                })
+            )
+            .then(receiver => 
+                Object.assign(
+                    fromNetworkEmitter
+                    , {destroy: () => receiver.destroy()}
+                )
+            )
     }
 
     function createToNetworkEmitter (quietProfileName){
@@ -60,21 +65,19 @@
             }
         })
 
-        return Object.assign(toNetworkEmitter, {
-            destroy: () => transmitter.destroy()
-        })
+        return quietSetupPromise
+            .then(() => 
+                Object.assign(
+                    toNetworkEmitter
+                    ,{destroy: () => transmitter.destroy()}
+                )
+            )
     }
 
     global.SonicSocket = function(){
-        return quietSetupPromise
-            .then(() => createFromNetworkEmitter("audible"))
-            .then(fromNetworkEmitter => ({
-                fromNetworkEmitter: fromNetworkEmitter,
-                toNetworkEmitter: createToNetworkEmitter("audible")
-            }))
-            .then(emitters => {
-                const fromNetworkEmitter = emitters.fromNetworkEmitter
-                const toNetworkEmitter = emitters.toNetworkEmitter
+        return Promise
+            .all([createFromNetworkEmitter("audible"), createToNetworkEmitter("audible")])
+            .then(([fromNetworkEmitter, toNetworkEmitter]) => {
 
                 toNetworkEmitter.on("transmit_finish", function(){
                     fromNetworkEmitter.emit("transmit_finish")
@@ -95,7 +98,6 @@
                 }
             })
             .catch(error => {
-                console.error("SonicSocket: ", error)
                 throw new Error("SonicSocket: " + error)
             })
     }
