@@ -17,11 +17,15 @@
         function onReceive(payload) {
             const rawData = Quiet.ab2str(payload)
             const message = SonicDataParser.parse(rawData)
-            fromNetworkEmitter.emit(message.messageName, message.data)
+            if(message !== null){
+                fromNetworkEmitter.emit(message.headerString, message.data)
+            } else {
+                fromNetworkEmitter.emit("receive_error", rawData)
+            }
         }
 
         function onReceiveFail(num_fails) {
-            fromNetworkEmitter.emit("receive_error", num_fails)
+            fromNetworkEmitter.emit("receive_checksum_error", num_fails)
         }
 
         return Quiet.receiver({
@@ -47,9 +51,9 @@
             ,onFinish: onTransmitFinish
         })
 
-        toNetworkEmitter.onAny((eventName, value) => {
-            if(eventName !== "transmit_finish"){
-                const rawData = SonicDataParser.stringify(eventName, value)
+        toNetworkEmitter.onAny((headerString, value) => {
+            if(headerString !== "transmit_finish"){
+                const rawData = SonicDataParser.stringify(headerString, value)
                 transmitter.transmit(Quiet.str2ab(
                     rawData
                 ))
@@ -80,6 +84,7 @@
                     on: (eventName, cb) => fromNetworkEmitter.on(eventName, cb)
                     ,once: (eventName, cb) => fromNetworkEmitter.once(eventName, cb)
                     ,onAny: (cb) => fromNetworkEmitter.onAny(cb)
+                    ,offAny: (cb) => fromNetworkEmitter.offAny(cb)
                     ,emit: (eventName, data) => toNetworkEmitter.emit(eventName, data)
                     ,removeAllListeners: eventName => fromNetworkEmitter.removeAllListeners(eventName)
                     ,close: () => {
