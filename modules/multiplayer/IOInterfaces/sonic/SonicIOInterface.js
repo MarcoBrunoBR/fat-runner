@@ -1,12 +1,12 @@
-;((global, withTransmissionLogging, withReceiveLogging,withOpenProcedure, withSelfMessagingPrevention, withPlayerConnection) => {
+;((global, withTransmissionLogging, withReceiveLogging,withOpenProcedure, withSelfIdentification, withPlayerConnection) => {
     global.SonicIOInterface = function(){
         return {
-            createSocket: () => 
+            createSocket: () =>
                 withPlayerConnection(
-                withReceiveLogging(
-                withSelfMessagingPrevention(
-                withOpenProcedure(
-                withTransmissionLogging(
+                withReceiveLogging(                
+                withSelfIdentification(
+                withOpenProcedure(    
+                withTransmissionLogging(            
                     new SonicSocket()
                 )))))
         }
