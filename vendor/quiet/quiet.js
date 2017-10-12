@@ -558,59 +558,61 @@ var Quiet = (function() {
 
     function gUMAudioBrowserSpecificConstraints(){
             return navigator.mediaDevices.enumerateDevices()
-            .then(devices => 
-                devices
+            .then(devices => {
+                return devices
                     .filter(device => device.kind === "audioinput")
-                    .find(device => device.label === "Speakerphone")
-            )
-            .then(speakerPhoneDevice => {
+                    .find(device => device.label === "Default")
+            
+            }).then(bestAudioInputDevice => {
+                const constraints = {
+                    echoCancellation: false
+                    ,noiseSuppression: false
+                    ,autoGainControl: false
+                }
+
                 if(navigator.webkitGetUserMedia !== undefined) {            
                     return Object.assign(
-                        speakerPhoneDevice ? 
-                        {
-                            deviceId: speakerPhoneDevice.deviceId
-                        } :
-                        {}
+                        bestAudioInputDevice
+                            ? {mandatory: {sourceId: bestAudioInputDevice.deviceId}}
+                            : {}
                         ,{
-                            googAutoGainControl: false,
-                            googAutoGainControl2: false,
-                            echoCancellation: false,
-                            googEchoCancellation: false,
-                            googEchoCancellation2: false,
-                            googDAEchoCancellation: false,
-                            googNoiseSuppression: false,
-                            googNoiseSuppression2: false,
-                            googHighpassFilter: false,
-                            googTypingNoiseDetection: false,
-                            googAudioMirroring: false
+                            optional: [
+                                {echoCancellation: false},
+                                {noiseSuppression: false},
+                                {autoGainControl: false},
+                                {googAutoGainControl: false},
+                                {googAutoGainControl2: false},
+                                {googEchoCancellation: false},
+                                {googEchoCancellation2: false},
+                                {googDAEchoCancellation: false},
+                                {googNoiseSuppression: false},
+                                {googNoiseSuppression2: false},
+                                {googHighpassFilter: false},
+                                {googTypingNoiseDetection: false},
+                                {googAudioMirroring: false}
+                            ]
                         }
                     );                   
                 }
 
                 if (navigator.mozGetUserMedia !== undefined) {
-                    return Object.assign(
-                        speakerPhoneDevice ? 
-                        {
-                            deviceId: speakerPhoneDevice.deviceId
-                        } :
-                        {}
+                    return Object.assign(                        
+                        bestAudioInputDevice
+                            ? {deviceId: bestAudioInputDevice.deviceId} 
+                            : {}
+                        ,constraints
                         ,{
-                            echoCancellation: false,
-                            mozAutoGainControl: false,
-                            mozNoiseSuppression: false
+                            mozAutoGainControl: false
+                            ,mozNoiseSuppression: false
                         }
                     );
-                }
+                }        
 
-                return Object.assign(
-                    speakerPhoneDevice ? 
-                    {
-                        deviceId: speakerPhoneDevice.deviceId
-                    } :
-                    {}
-                    ,{
-                        echoCancellation: false
-                    }
+                return Object.assign(                      
+                    bestAudioInputDevice
+                        ? {deviceId: bestAudioInputDevice.deviceId} 
+                        : {}
+                    ,constraints
                 );
             });
     }
