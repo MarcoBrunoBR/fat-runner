@@ -7,33 +7,36 @@
             ,"connect_error"
             ,"connect_timeout"
         ]
+        
+        let timeoutTimer, retryTimer
+        let stopTimers = false
+        const clearTimers = () => {
+            stopTimers = true
+            if(timeoutTimer){
+                global.clearTimeout(timeoutTimer)
+                timeoutTimer = undefined
+            }
+            if(retryTimer){
+                global.clearTimeout(retryTimer)
+                retryTimer = undefined
+            }
+        }
 
         const open = () => new Promise((resolve, reject) => {
-
-            let timeoutTimer, retryTimer
-            let stopTimers = false
-
-            const clearTimers = () => {
-                stopTimers = true
-                if(timeoutTimer){
-                    global.clearTimeout(timeoutTimer)
-                    timeoutTimer = undefined
-                }
-                if(retryTimer){
-                    global.clearTimeout(retryTimer)
-                    retryTimer = undefined
-                }
-            }
+            stopTimers = false
 
             const hardwareCheckupID = Math.ceil(Math.random() * 1000)
+            const hardwareCheckup = SonicDataParser.stringifyHeader({origin: "self", destination: "self", messageName: "hC"})
             
-            socket.once(hardwareCheckupID, function(){
-                clearTimers()
-                connectionEventsEmitter.emit("connect")
+            socket.once(hardwareCheckup, function(receivedHardwareCheckupID){
+                if(receivedHardwareCheckupID == hardwareCheckupID){
+                    clearTimers()
+                    connectionEventsEmitter.emit("connect")
+                }
             })
 
-            retryTimer = setTimeout(function retry(){
-                socket.emit(hardwareCheckupID)
+            retryTimer = setTimeout(function retry(){                
+                socket.emit(hardwareCheckup, hardwareCheckupID)
                 if(!stopTimers){
                     retryTimer = setTimeout(retry, 20000 / 20)
                 }
@@ -65,6 +68,10 @@
             ,on: (eventName, callback) => listenWithHandler("on", callback, eventName)
             ,once: (eventName, callback) => listenWithHandler("once", callback, eventName)
             ,onAny: (callback) => listenWithHandler("onAny", callback)
+            ,close: () => {
+                clearTimers()
+                socket.close()
+            }
         })
         
     })

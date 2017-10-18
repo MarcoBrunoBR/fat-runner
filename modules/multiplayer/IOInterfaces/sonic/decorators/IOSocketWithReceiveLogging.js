@@ -2,9 +2,14 @@
     global.IOSocketWithReceiveLogging = socketPromise => socketPromise.then(socket => {
         
 
-        socket.onAny(function(messageName, data){
-            if(messageName !== "transmit_finish"){
-                console.log("Received:", SonicDataParser.stringify(messageName, data))
+        socket.onAny(function(headerString, data){
+            const header = SonicDataParser.parseHeader(headerString)
+            const messageName = header.messageName
+            if(messageName === "receive_checksum_error"){
+                console.error("Received with checksum error:", SonicDataParser.stringify(messageName, data))
+            }
+            else if(messageName !== "transmit_finish" && messageName !== "removeListener"){
+                console.log("Received:", SonicDataParser.stringify(headerString, data))
             }
         })
 

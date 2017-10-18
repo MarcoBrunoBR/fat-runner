@@ -1,6 +1,6 @@
 ((global) => {
     global.Server = function(ioInterface){
-        
+        let createSocketPromise
         const connect = () => {
             createSocketPromise = ioInterface.createSocket()
             return new Promise((resolve, reject) => {
@@ -17,7 +17,7 @@
                     
                     socket.open()
                 })
-            })
+            }) 
         }
 
         return {

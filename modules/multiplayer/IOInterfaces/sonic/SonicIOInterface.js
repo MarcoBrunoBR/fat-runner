@@ -1,14 +1,15 @@
-;((global, withTransmissionLogging, withReceiveLogging,withOpenProcedure, withSelfIdentification, withPlayerConnection) => {
+;((global, withTransmissionLogging, withReceiveLogging,withOpenProcedure, withSelfIdentification, withPlayerConnection, withSelfReceptionPrevention) => {
     global.SonicIOInterface = function(){
         return {
             createSocket: () =>
+                withReceiveLogging(
+                withSelfReceptionPrevention(
                 withPlayerConnection(
-                withReceiveLogging(                
-                withSelfIdentification(
                 withOpenProcedure(    
-                withTransmissionLogging(            
+                withSelfIdentification(   
+                withTransmissionLogging(           
                     new SonicSocket()
-                )))))
+                ))))))
         }
     }
-})(window, IOSocketWithTransmissionLogging, IOSocketWithReceiveLogging, IOSocketWithOpenProcedure, IOSocketWithIdentity, IOSocketWithPlayerConnection ,SonicSocket)
+})(window, IOSocketWithTransmissionLogging, IOSocketWithReceiveLogging, IOSocketWithOpenProcedure, IOSocketWithIdentity, IOSocketWithPlayerConnection, IOSocketWithSelfReceptionPrevention,SonicSocket)

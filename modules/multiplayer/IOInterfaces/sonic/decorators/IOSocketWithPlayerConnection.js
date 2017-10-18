@@ -13,8 +13,10 @@
         })
 
         let tryingConnTo = null
+        let tryConnectionTimer
 
-        function tryConnectingToMe(remoteId, remoteSeqNumber, foundYou){            
+        function tryConnectingToMe(remoteId, remoteSeqNumber, foundYou){
+
             tryingConnTo = remoteId
             let otherSideFoundYou = !!foundYou
 
@@ -23,22 +25,15 @@
             })
 
             function startHandshake(){
-                console.log("####### SUCESSO #######")
-                // não decidir pelo sequence number, mas pela maneira que chegou aqui
-                if(mySeqNumber > remoteSeqNumber){
-                    console.log("Vou mandar nas parada tudo")
-                } else {
-                    console.log("Vou ficar suavão")
-                }
+                const matchId = mySeqNumber > remoteSeqNumber ? mySeqNumber : remoteSeqNumber
+                   
             }
 
             preConnectionProcedure.stop()
             preConnectionProcedure.start(remoteId)
             
-            let tryConnectionTimer
             tryConnectionTimer = setTimeout(function retry(){
                 if(otherSideFoundYou){
-                    //TODO quando parar? aqui não pode pq o outro lado tem que saber que eu achei ele preConnectionProcedure.stop(remoteId)
                     global.clearTimeout(tryConnectionTimer)
                     tryConnectionTimer = undefined
                     startHandshake()
@@ -50,10 +45,10 @@
         }
 
         othersideConnectionStatusEmitter.on("thereAreOthersWaiting", () => {
-            console.log("tem nego esperando")
+            console.log("Tem gente esperando")
         })
 
-        socket.onAny(function handleConnectionRequest(headerString, data){
+        function handleConnectionRequest(headerString, data){
             if(!connected){
                 const header = SonicDataParser.parseHeader(headerString)
                 const origin = header.origin
@@ -66,11 +61,11 @@
                 if(isRequestingAnyone){
                     if(tryingConnTo === null){  
                         //TODO maybe adding to a queue ordered by frequency (descending) and try to connect from first to last
-                        console.log("esse tá querendo qualquer um, bora conectar", origin, destination)
+                        console.log("Achei alguém procurando qualquer um, vou tentar conectar", origin)
                         tryConnectingToMe(origin, data, false)
                     } else {
                         if(origin === tryingConnTo){
-                            console.log("tô tentando me conectar com esse cara mas ele não me achou", origin, destination)
+                            console.log("Estou tentando me conectar com alguém específico, mas ele não me achou", origin)
                             othersideConnectionStatusEmitter.emit("didNotFoundYou", origin)
                         } else {
                             othersideConnectionStatusEmitter.emit("thereAreOthersWaiting")
@@ -78,15 +73,15 @@
                     }
                 } else if(isRequestingMe){
                     if(tryingConnTo === null){
-                        console.log("alguem me achou, bora conectar", origin, destination)
+                        console.log("Alguém tinha me achado e eu acabei de achar ele, vou tentar conectar", origin, destination)
                         tryConnectingToMe(origin, data, true)
                     } else if(tryingConnTo === origin){
-                        console.log("alguem me achou e eu estava esperando ele", origin, destination)
+                        console.log("Alguém me achou e eu já estava esperando ele", origin, destination)
                         othersideConnectionStatusEmitter.emit("foundYou", origin)
                     }
                 }
             }
-        })
+        }
 
         const preConnectionProcedure = (() => {
 
@@ -94,24 +89,29 @@
             
             let emitFPTimeoutTimer
             let emitFindPlayerTimer
+            let currentDestination
 
             function startFP(destination){
+                socket.onAny(handleConnectionRequest)
+                currentDestination = destination
                 let lastFPSuccessfullyEmitted = true
                 let selfRTT
                 let selfStartTransmisionTimestamp
 
-                socket.on(SonicDataParser.stringifyHeader({origin: 'self', messageName: 'fP', destination: destination}), function(){
+                socket.on(SonicDataParser.stringifyHeader({origin: 'self', messageName: 'fP', destination: currentDestination}), function(){
 
                     global.clearTimeout(emitFPTimeoutTimer)
                     emitFPTimeoutTimer = undefined
 
                     lastFPSuccessfullyEmitted = true
                     selfRTT = global.performance.now() - selfStartTransmisionTimestamp
+                    console.log('### selfRTT ###' , selfRTT)
 
                     //Mudar a taxa de transmissão aqui, caso o rtt tenha melhorado ou não sido alterado baseado num treshold e não baseado nessa porra dessa variável booleana do caralho
                     //if I heard miself I can increase transmission rate
                     if(emitFPTimeoutTimerTime >= 1100){
                         emitFPTimeoutTimerTime -= 100
+                        console.log("I heard myself, decreasing transmission interval to", emitFPTimeoutTimerTime / 5)
                     }
                 })
 
@@ -119,7 +119,7 @@
                     if(lastFPSuccessfullyEmitted){
                         lastFPSuccessfullyEmitted = false
                         selfStartTransmisionTimestamp = global.performance.now()
-                        socket.emit(SonicDataParser.stringifyHeader({messageName: 'fP', destination: destination}), mySeqNumber)
+                        socket.emit(SonicDataParser.stringifyHeader({origin: 'self', messageName: 'fP', destination: currentDestination}), mySeqNumber)
                     } else {
                         if(!emitFPTimeoutTimer){
                             emitFPTimeoutTimer = setTimeout(() => {
@@ -131,9 +131,9 @@
                                     const newTimeoutTime = Math.ceil(emitFPTimeoutTimerTime * (Math.random() * (1.25 - 1) + 1))
                                     if(newTimeoutTime <= 5000){
                                         emitFPTimeoutTimerTime = newTimeoutTime
-                                        console.log("Timedout: decreasing speed to", emitFPTimeoutTimerTime / 5)
+                                        console.log("Timedout: increasing transmission interval speed to", emitFPTimeoutTimerTime / 5)
                                     } else {
-                                        console.log("Timedout but speed is minimun already", emitFPTimeoutTimerTime)
+                                        console.log("Timedout but transmission interval is maximum already", emitFPTimeoutTimerTime)
                                     }
                                     lastFPSuccessfullyEmitted = true
                                 }
@@ -144,26 +144,28 @@
                 }, emitFPTimeoutTimerTime / 5)
             }
 
-            function stopFP(destination){
+            function stopFP(){
                 emitFPTimeoutTimerTime = 1000
+                socket.offAny(handleConnectionRequest)
                 socket.removeAllListeners(
                     SonicDataParser.stringifyHeader(
-                        {origin: 'self', messageName: 'fP', destination: destination}
+                        {origin: 'self', messageName: 'fP', destination: currentDestination}
                     )
                 )
-                if(emitFPTimeoutTimer){
-                    global.clearTimeout(emitFPTimeoutTimer)
-                    emitFPTimeoutTimer = undefined
-                }
                 if(emitFindPlayerTimer){
                     global.clearTimeout(emitFindPlayerTimer)
                     emitFindPlayerTimer = undefined
                 }
+                if(emitFPTimeoutTimer){
+                    global.clearTimeout(emitFPTimeoutTimer)
+                    emitFPTimeoutTimer = undefined
+                }
+                currentDestination = undefined
             }
             
             return {
                 start: (destination) => startFP(destination)
-                ,stop: (destination) => stopFP(destination)
+                ,stop: () => stopFP()
             }
         })()
 
@@ -175,6 +177,10 @@
                     socket.emit(eventName, msg)
                 }
             }
+            ,close : () => {
+                preConnectionProcedure.stop()
+                socket.close()
+            }
         })
     })
-})(window, EventEmitter2)
+})(window, EventEmitter2, SonicDataParser)
