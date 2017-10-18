@@ -9,11 +9,13 @@
     global.BrowserCompatibility = {
         setIphoneFix: ($element = document) => {
             $element.addEventListener('touchmove', IphonePinchToZoomFix, false)
-            $element.addEventListener('touchend', IphoneDblTouchToZoomFix, false)
+            // $element.addEventListener('touchend', IphoneDblTouchToZoomFix, false)
+            $element.addEventListener('click', IphoneDblTouchToZoomFix, false)
         }
         ,unsetIphoneFix: ($element = document) => {
             $element.removeEventListener('touchmove', IphonePinchToZoomFix)
-            $element.removeEventListener('touchend', IphoneDblTouchToZoomFix)
+            // $element.removeEventListener('touchend', IphoneDblTouchToZoomFix)
+            $element.addEventListener('click', IphoneDblTouchToZoomFix, false)
         }
     }
 })(window)

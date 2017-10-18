@@ -13,11 +13,11 @@
         const render = (dom, delegator, onAnimationFrame) => {
 
             const $element = dom`
-                <div class="loadingRemoteMatch">
-                    <span class="loadingRemoteMatch-text">
-                        ${state.connectionVisualFeedback}
-                    </span>
-                </div>
+            <div class="loadingRemoteMatch">
+                <span class="loadingRemoteMatch-text">
+                    ${state.connectionVisualFeedback}
+                </span>
+            </div>
             `
 
             const $loadingText = $element.querySelector('.loadingRemoteMatch-text')

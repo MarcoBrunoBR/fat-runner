@@ -62,5 +62,5 @@
         return {render}
     }
 
-})(window, document.body, document.dom, Objectz.extends, DOMComponent, Colors)
+})(window, window.gameScreen, document.dom, Objectz.extends, DOMComponent, Colors)
 

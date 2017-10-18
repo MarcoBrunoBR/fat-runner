@@ -22,7 +22,8 @@
                 $playerBtn.classList.toggle('player-btn--active', state.active)
             })
 
-            on('touchend', '.player-btn', playerController.click)
+            // on('touchend', '.player-btn', playerController.click)
+            on('click', '.player-btn', playerController.click)
 
             return $element
         }

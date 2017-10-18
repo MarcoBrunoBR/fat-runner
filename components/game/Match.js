@@ -91,8 +91,10 @@
         }
       })  
       
-      on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
-      on('touchend', '.gameEndOptions-option--menu', handleMenu)
+      on('click', '.gameEndOptions-option--playAgain', handlePlayAgain)
+      // on('touchend', '.gameEndOptions-option--playAgain', handlePlayAgain)
+      on('click', '.gameEndOptions-option--menu', handleMenu)
+      // on('touchend', '.gameEndOptions-option--menu', handleMenu)
       on('transitionend', ".pontos-texto", () => {
         $element.classList.add('wrapperPlayers--openedOptions')
       })
@@ -143,4 +145,4 @@
     })
   }
 
- })(window, document.body, Object.seal, Objectz.extends, DOMComponent, BotMatch, EventDelegator, Colors, $$Player)
+ })(window, window.gameScreen, Object.seal, Objectz.extends, DOMComponent, BotMatch, EventDelegator, Colors, $$Player)

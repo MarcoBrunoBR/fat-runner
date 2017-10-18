@@ -10,7 +10,9 @@ html, body {
 
 body {
   font-family: Arial;
-  font-size: 50px;
+  background: white;
+  padding: 1em 0;
+  box-sizing: border-box;
 }
 
 ul, ol, li {

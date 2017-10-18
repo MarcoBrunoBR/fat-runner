@@ -21,10 +21,10 @@
 
 .player-btn {
   font-family: inherit;
-  font-size: inherit;
+  font-size: 3.125rem;
   display: block;
-  width: 40vw;
-  height: 40vw;
+  width: 10.34rem;
+  height: 10.34rem;
   border-radius: 50% 0%;
   position: absolute;
   left: 50%;
@@ -67,8 +67,8 @@
 }
 
 .player-shadow {
-  width: 40vw;
-  height: 40vw;
+  width: 10.34rem;
+  height: 10.34rem;
   border-radius: 50% 0%;
   position: absolute;
   left: 50%;
