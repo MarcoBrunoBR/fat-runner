@@ -1,6 +1,13 @@
 ;((global) => {
     global.IOSocketWithPlayerConnection = socketPromise => socketPromise.then(socket => {
 
+        const playerConnectionEmitter = new EventEmitter2()
+        const playerConnectionEvents = [
+            "matchFound"
+        ]
+
+        const matches = []
+
         const stringifySeqNumber = number => parseInt(number).toString().padStart(3, 0)
         const parseSeqNumber = numberString => parseInt(numberString)
         const mySeqNumber = Math.ceil(Math.random() * 998)
@@ -15,19 +22,29 @@
         let tryingConnTo = null
         let tryConnectionTimer
 
+
         function tryConnectingToMe(remoteId, remoteSeqNumber, foundYou){
 
             tryingConnTo = remoteId
             let otherSideFoundYou = !!foundYou
 
+            function startHandshake(){
+                const matchId = (mySeqNumber > remoteSeqNumber ? 'm'+mySeqNumber : 'm'+remoteSeqNumber) 
+                const isMatchHappening = !!matches.find(match => match.id === matchId)
+                if(!isMatchHappening){
+                    preConnectionProcedure.stop()
+                    preConnectionProcedure.start()
+                    tryingConnTo = null
+                    tryConnectionTimer = undefined
+                    global.clearTimeout(tryConnectionTimer)
+                    matches.push({id: matchId, players: [remoteId]})
+                    playerConnectionEmitter.emit('matchFound', matchId)
+                }
+            }
+
             othersideConnectionStatusEmitter.on("foundYou", () => {
                 otherSideFoundYou = true
             })
-
-            function startHandshake(){
-                const matchId = mySeqNumber > remoteSeqNumber ? mySeqNumber : remoteSeqNumber
-                   
-            }
 
             preConnectionProcedure.stop()
             preConnectionProcedure.start(remoteId)
@@ -45,7 +62,7 @@
         }
 
         othersideConnectionStatusEmitter.on("thereAreOthersWaiting", () => {
-            console.log("Tem gente esperando")
+            console.log("###### Tem gente esperando ########")
         })
 
         function handleConnectionRequest(headerString, data){
@@ -169,18 +186,81 @@
             }
         })()
 
-        return Object.assign({}, socket, {
-            emit: (eventName, msg) => {
-                if(eventName === "findPlayer"){
-                    preConnectionProcedure.start()
+        const withMatchConnection = (socketPromise, matchId) => socketPromise.then(socket => {
+            const matchEventsEmitter = new EventEmitter2()
+            
+            const match = matches.find(match => match.id === matchId)
+
+            socket.onAny((headerString, data) => {
+                const header = SonicDataParser.parseHeader(headerString)
+                if(header.destination === matchId && match && match.players.indexOf(header.origin) >= 0){
+                    matchEventsEmitter.emit(header.messageName, data)
+                }
+            })
+
+            const disconnect = () => {
+                return Promise.resolve((() => {
+                    matches.splice(matches.indexOf(match), 1)
+                    socket.close()
+                })())
+            }
+
+            const matchEmit = (eventName) => {
+                const header = SonicDataParser.parseHeader(eventName)
+                header.destination = matchId
+
+                if(header.messageName === 'disconnect'){
+                    disconnect().then(() => {
+                        socket.emit(SonicDataParser.stringifyHeader(header), undefined)
+                    })
                 } else {
-                    socket.emit(eventName, msg)
+                    socket.emit(SonicDataParser.stringifyHeader(header), undefined)
                 }
             }
-            ,close : () => {
+
+            return Object.assign({}, socket, {
+                emit: matchEmit
+                ,on: (eventName, cb) => {
+                    matchEventsEmitter.on(eventName, cb)
+                }
+            })
+        })
+
+        const listenWithHandler = (handler, cb, eventName) => {          
+            if(handler === "onAny") {
+                socket.onAny(cb)
+                playerConnectionEmitter.onAny(cb)
+            } else {
+                const emitter = playerConnectionEvents.indexOf(eventName) > -1 
+                    ? playerConnectionEmitter
+                    : socket
+
+                emitter[handler](eventName, cb)
+            }
+        }
+
+        return Object.assign({}, socket, {
+            close : () => {
                 preConnectionProcedure.stop()
+                tryingConnTo = null
+                tryConnectionTimer = undefined
+                global.clearTimeout(tryConnectionTimer)
                 socket.close()
             }
+            ,searchNearby: () => {
+                preConnectionProcedure.start()
+            }
+            ,connect: (matchId) => {
+                preConnectionProcedure.stop()
+                const matchIndex = matches.indexOf({id: matchId})
+                const match = matches[matchIndex]
+                // matches.splice(matchIndex, 1)
+                
+                return withMatchConnection(Promise.resolve(socket), matchId)
+            }
+            ,on: (eventName, callback) => listenWithHandler("on", callback, eventName)
+            ,once: (eventName, callback) => listenWithHandler("once", callback, eventName)
+            ,onAny: (callback) => listenWithHandler("onAny", callback)
         })
     })
 })(window, EventEmitter2, SonicDataParser)

@@ -3,9 +3,8 @@
         let createSocketPromise
         const connect = () => {
             createSocketPromise = ioInterface.createSocket()
-            return new Promise((resolve, reject) => {
-                createSocketPromise.then(s => {
-                    socket = s
+            return createSocketPromise.then(socket => 
+                new Promise((resolve, reject) => {
                     socket.on('connect', function () {
                         resolve(new ServerConnection(socket))
                     })
@@ -15,9 +14,9 @@
                         reject(error)
                     })
                     
-                    socket.open()
+                    socket.open()                    
                 })
-            }) 
+            )
         }
 
         return {

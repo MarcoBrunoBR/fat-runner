@@ -2,23 +2,28 @@
 
     global.ServerConnection = function(serverSocket){
         return {
-            findPlayer: () => findPlayer(serverSocket)
+            findPlayers: () => findPlayers(serverSocket)
         }
     }
 
-    const findPlayer = (socket) => {
+    const findPlayers = (socket) => {
         return new Promise((resolve, reject) => {
-            socket.on("playerFound", (matchID) => {
-                const emitToMatch = (msgName) => socket.emit(msgName)
-                const receiveFromMatch = (msgName, callback) => socket.on(msgName, callback)
+            const playerSearchEmitter = new EventEmitter2()
 
-                resolve({emit: emitToMatch, on: receiveFromMatch})
+            socket.on("matchFound", (matchID) => {                
+                playerSearchEmitter.emit('matchFound', matchID)
             })
-            socket.on("playerNotFound", () => {
-                reject("Can't find a player for you right now :( Try again later =)")
+
+            playerSearchEmitter.on('chooseMatch', (matchId) => {
+                socket.connect(matchId).then(matchConnection => {
+                    playerSearchEmitter.emit('matchConnection', matchConnection)
+                })
             })
-            socket.emit("findPlayer")
+
+            socket.searchNearby()
+
+            resolve(playerSearchEmitter)
         })
     }
 
-})(window, RemoteMatch, Promise)
+})(window, RemoteMatch, EventEmitter2, Promise)

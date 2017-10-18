@@ -34,10 +34,15 @@
             return $element
         }
 
+        const asyncConfirmList = []
+
         const willUnmount = () => {
             if(!state.startingMatch){
                 connectionVisualFeedback.end()
                 connectionVisualFeedback.start("Closing connection")
+                asyncConfirmList.forEach(asyncConfirm => {
+                    asyncConfirm.remove()
+                })
                 return server.disconnect().then(() => connectionVisualFeedback.end())
             }
         }
@@ -69,15 +74,54 @@
 
         const remoteMatchConnectionPipeline = () => {    
             connectionVisualFeedback.start("Connecting to servers")
+
+            const matchPairing = (() => {
+                const matchPairingEmitter = new EventEmitter2()
+                return {
+                    addMatch: matchId => {
+
+                        const asyncConfirm = new AsyncConfirm()
+
+                        asyncConfirmList.push(asyncConfirm)
+
+                        //TODO aparecer matches em uma listagem e renderizar novo GameState de tela com loading
+                        asyncConfirm.show("Iniciar partida: " + matchId + "?")
+                            .then(() => {
+                                matchPairingEmitter.emit('start', matchId)
+                            })
+                    }
+                    ,wait: () => new Promise((resolve, reject) => {
+                        matchPairingEmitter.on('start', (matchId) => {
+                            resolve(matchId)
+                        })
+                    })
+                }
+            })()
+
             serverConnectionPromise
                 .then(serverConnection => {
                     connectionVisualFeedback.end()
                     connectionVisualFeedback.start("Searching for an oponent")
-                    return serverConnection.findPlayer()
+                    return serverConnection.findPlayers()
+                })
+                .then(matchFoundEmitter => {
+                    matchFoundEmitter.on('matchFound', (matchId) => {
+                        matchPairing.addMatch(matchId)
+                    })
+
+                    matchPairing.wait().then(matchId => {
+                        matchFoundEmitter.emit('chooseMatch', matchId)
+                    })
+
+                    return new Promise((resolve, reject) => {
+                        matchFoundEmitter.on('matchConnection', (matchConnection) => {
+                            resolve(matchConnection)
+                        })
+                    })
                 })
                 .then(matchConnection => {                    
                     connectionVisualFeedback.end()
-                    matchConnection.on('otherPlayerDisconnected', () => {
+                    matchConnection.on('disconnect', () => {
                         remoteMatchConnectionPipeline()
                     })
                     state.startingMatch = true
@@ -96,4 +140,4 @@
             render, willUnmount
         }
     }
-})(window, SonicServer, Object.seal, DOMComponent, RemoteMatch)
+})(window, SonicServer, Object.seal, DOMComponent, RemoteMatch, AsyncConfirm)

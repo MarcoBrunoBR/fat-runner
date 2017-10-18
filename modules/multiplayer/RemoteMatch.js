@@ -31,7 +31,7 @@
             }
             ,onUpdatePoints: (callback) => {
                 match.onUpdatePoints(callback)
-                matchConnection.on('abruptEnd', () => {
+                matchConnection.on('disconnect', () => {
                     callback(20, 2)
                 })
             }

@@ -91,14 +91,13 @@
                     ,emit: (eventName, data) => toNetworkEmitter.emit(eventName, data)
                     ,removeAllListeners: eventName => fromNetworkEmitter.removeAllListeners(eventName)
                     ,close: () => {
+                        console.log("FECHANDO")
                         fromNetworkEmitter.destroy()
                         toNetworkEmitter.destroy()
                         Quiet.disconnect()
                     }
                 }
             })
-            .catch(error => {
-                throw new Error("SonicSocket: " + error)
-            })
+            .catch(error => Promise.reject(new Error("SonicSocket: " + error)))
     }
 })(window, EventEmitter2, SonicDataParser)
